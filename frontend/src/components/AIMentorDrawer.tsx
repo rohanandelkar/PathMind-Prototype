@@ -46,7 +46,7 @@ export default function AIMentorDrawer() {
       {/* Floating Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-medium text-sm shadow-xl shadow-sky-500/25 hover:scale-105 transition-all flex items-center gap-2 border border-sky-400/30"
+        className="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-full bg-gradient-to-r from-brand-500 to-accent-red text-white font-medium text-sm shadow-xl shadow-brand-500/25 hover:scale-105 transition-all flex items-center gap-2 border border-brand-500/30"
       >
         <Sparkles className="w-4 h-4" />
         <span>Ask AI Mentor</span>
@@ -54,20 +54,20 @@ export default function AIMentorDrawer() {
 
       {/* Drawer Panel */}
       {isOpen && (
-        <div className="fixed bottom-20 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex flex-col h-[500px] overflow-hidden">
+        <div className="fixed bottom-20 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-theme-surface border border-theme-border rounded-2xl shadow-2xl flex flex-col h-[500px] overflow-hidden">
           
           {/* Header */}
-          <div className="p-4 bg-slate-800/80 border-b border-slate-700/80 flex items-center justify-between">
+          <div className="p-4 bg-theme-hover border-b border-theme-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-sky-500/10 text-sky-400">
+              <div className="p-2 rounded-xl bg-brand-500/10 text-primary">
                 <Bot className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white">AI Learning Mentor</h3>
+                <h3 className="text-sm font-bold text-theme-main">AI Learning Mentor</h3>
                 <p className="text-[10px] text-emerald-400 font-medium">Context-Aware LLM Active</p>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white p-1 rounded-lg">
+            <button onClick={() => setIsOpen(false)} className="text-theme-muted hover:text-theme-main p-1 rounded-lg">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -80,15 +80,15 @@ export default function AIMentorDrawer() {
                 className={`flex gap-2.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {msg.sender === 'ai' && (
-                  <div className="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-7 h-7 rounded-lg bg-brand-500/20 text-primary flex items-center justify-center shrink-0 mt-0.5">
                     <Bot className="w-4 h-4" />
                   </div>
                 )}
                 <div
                   className={`p-3 rounded-2xl max-w-[80%] leading-relaxed ${
                     msg.sender === 'user'
-                      ? 'bg-sky-600 text-white rounded-tr-none'
-                      : 'bg-slate-800 text-slate-200 border border-slate-700/60 rounded-tl-none'
+                      ? 'bg-brand-600 text-white rounded-tr-none shadow-sm'
+                      : 'bg-theme-hover text-theme-main border border-theme-border rounded-tl-none'
                   }`}
                 >
                   <p>{msg.content}</p>
@@ -97,26 +97,26 @@ export default function AIMentorDrawer() {
             ))}
 
             {loading && (
-              <div className="flex gap-2 items-center text-slate-400 text-xs py-2">
-                <RefreshCw className="w-4 h-4 animate-spin text-sky-400" /> AI Mentor analyzing your skill path...
+              <div className="flex gap-2 items-center text-theme-muted text-xs py-2">
+                <RefreshCw className="w-4 h-4 animate-spin text-primary" /> AI Mentor analyzing your skill path...
               </div>
             )}
           </div>
 
           {/* Input Box */}
-          <div className="p-3 bg-slate-900 border-t border-slate-800 flex items-center gap-2">
+          <div className="p-3 bg-theme-surface border-t border-theme-border flex items-center gap-2">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Ask mentor (e.g. 'Why learn Java before Spring?')..."
-              className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:border-sky-500"
+              className="flex-1 px-3 py-2 bg-theme-hover border border-theme-border rounded-xl text-xs text-theme-main placeholder:text-theme-muted focus:outline-none focus:border-brand-500"
             />
             <button
               onClick={handleSend}
               disabled={loading || !input.trim()}
-              className="p-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white transition-colors disabled:opacity-50"
+              className="p-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white transition-colors disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
             </button>

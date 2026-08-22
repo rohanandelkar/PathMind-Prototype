@@ -45,14 +45,49 @@ export const MOCK_ROADMAP: PersonalizedRoadmap = {
       completion_criteria: 'Score > 80% on fundamentals assessment.',
       resources: [
         {
-          id: 'r1',
-          title: 'Algorithmic Problem Solving in Java',
-          type: 'Video Tutorial',
-          url: 'https://coursera.org',
-          duration_hours: 4.5,
+          id: 'r1_v1',
+          title: 'Java Tutorial for Beginners - Full Course',
+          type: 'Video Resource',
+          url: 'https://www.youtube.com/watch?v=eIrMbAQSU34',
+          duration_hours: 4.0,
           difficulty: 'Beginner',
-          provider: 'HCLTech Learning Hub',
-          description: 'Core logic building blocks in Java.',
+          provider: 'Programming with Mosh',
+          description: 'Step-by-step introduction to Java JDK installation, IntelliJ IDE, variables, control flow, methods, and debugging.',
+          skill_name: 'Programming Fundamentals',
+          thumbnail_url: 'https://img.youtube.com/vi/eIrMbAQSU34/hqdefault.jpg'
+        },
+        {
+          id: 'r1_v2',
+          title: 'Java Programming for Beginners Full Course',
+          type: 'Video Resource',
+          url: 'https://www.youtube.com/watch?v=A74TOX803D0',
+          duration_hours: 3.5,
+          difficulty: 'Beginner',
+          provider: 'freeCodeCamp.org',
+          description: 'Comprehensive beginner course covering Java fundamentals, operators, conditional branching, loops, and methods.',
+          skill_name: 'Programming Fundamentals',
+          thumbnail_url: 'https://img.youtube.com/vi/A74TOX803D0/hqdefault.jpg'
+        },
+        {
+          id: 'r1_d1',
+          title: 'Oracle Java Language Basics & Syntax',
+          type: 'Official Documentation',
+          url: 'https://docs.oracle.com/javase/tutorial/java/nutsandbolts/index.html',
+          duration_hours: 3.5,
+          difficulty: 'Beginner',
+          provider: 'Oracle Java Documentation',
+          description: 'Official Oracle guide covering Java variables, primitive data types, operators, expressions, control flow, and arrays.',
+          skill_name: 'Programming Fundamentals'
+        },
+        {
+          id: 'r1_d2',
+          title: 'Oracle Java Control Flow Statements Guide',
+          type: 'Official Documentation',
+          url: 'https://docs.oracle.com/javase/tutorial/java/nutsandbolts/flow.html',
+          duration_hours: 2.5,
+          difficulty: 'Beginner',
+          provider: 'Oracle Java Documentation',
+          description: 'Official Oracle reference for if-then-else, switch, while, do-while, and for loop control statements in Java.',
           skill_name: 'Programming Fundamentals'
         }
       ]
@@ -70,14 +105,37 @@ export const MOCK_ROADMAP: PersonalizedRoadmap = {
       completion_criteria: 'Write multi-table JOINs and indexed queries.',
       resources: [
         {
-          id: 'r2',
-          title: 'PostgreSQL Relational Schema Design',
-          type: 'Hands-on Project',
-          url: 'https://postgresql.org',
-          duration_hours: 6.0,
-          difficulty: 'Intermediate',
-          provider: 'PostgreSQL Docs',
-          description: 'Database schema design and indexing.',
+          id: 'r2_doc',
+          title: 'PostgreSQL SQL Language Official Tutorial',
+          type: 'Official Documentation',
+          url: 'https://www.postgresql.org/docs/current/tutorial-sql.html',
+          duration_hours: 4.0,
+          difficulty: 'Beginner to Intermediate',
+          provider: 'PostgreSQL Official Documentation',
+          description: 'Official tutorial on SQL commands: SELECT, INSERT, UPDATE, DELETE, multi-table JOINs, foreign keys, and transactions.',
+          skill_name: 'SQL & Relational Databases'
+        },
+        {
+          id: 'r2_vid',
+          title: 'SQL & Database Design Full Course',
+          type: 'Video Resource',
+          url: 'https://www.youtube.com/watch?v=qw--VYLpxG4',
+          duration_hours: 4.0,
+          difficulty: 'Beginner',
+          provider: 'YouTube (freeCodeCamp)',
+          description: 'Complete database course introducing relational database design, ER diagrams, SQL queries, indexes, and normalization.',
+          skill_name: 'SQL & Relational Databases',
+          thumbnail_url: 'https://img.youtube.com/vi/qw--VYLpxG4/hqdefault.jpg'
+        },
+        {
+          id: 'r2_ext',
+          title: 'W3Schools SQL Tutorial & Reference',
+          type: 'Additional Resource',
+          url: 'https://www.w3schools.com/sql/',
+          duration_hours: 3.0,
+          difficulty: 'Beginner',
+          provider: 'W3Schools',
+          description: 'Interactive SQL reference with live code editor covering query syntax, table constraints, aggregation functions, and subqueries.',
           skill_name: 'SQL & Relational Databases'
         }
       ]
@@ -97,14 +155,37 @@ export const MOCK_ROADMAP: PersonalizedRoadmap = {
       project_prompt: 'Create a Java Banking Console System implementing Inheritance and Encapsulation.',
       resources: [
         {
-          id: 'r3',
-          title: 'Java Programming Masterclass 2026',
-          type: 'Hands-on Code',
-          url: 'https://oracle.com',
-          duration_hours: 8.0,
+          id: 'r3_doc',
+          title: 'Oracle Java Object-Oriented Programming Concepts',
+          type: 'Official Documentation',
+          url: 'https://docs.oracle.com/javase/tutorial/java/concepts/index.html',
+          duration_hours: 4.0,
           difficulty: 'Beginner to Intermediate',
-          provider: 'Oracle University',
-          description: 'OOP design patterns and memory model.',
+          provider: 'Oracle Java Documentation',
+          description: 'Official Java documentation on classes, objects, interfaces, inheritance, polymorphism, encapsulation, and packages.',
+          skill_name: 'Java Basics & OOP'
+        },
+        {
+          id: 'r3_vid',
+          title: 'Java Object Oriented Programming (OOP) - Full Course',
+          type: 'Video Resource',
+          url: 'https://www.youtube.com/watch?v=grEKMHGYyns',
+          duration_hours: 3.5,
+          difficulty: 'Beginner to Intermediate',
+          provider: 'YouTube (freeCodeCamp)',
+          description: 'Master OOP in Java: constructors, method overloading vs overriding, abstract classes, interfaces, and access modifiers.',
+          skill_name: 'Java Basics & OOP',
+          thumbnail_url: 'https://img.youtube.com/vi/grEKMHGYyns/hqdefault.jpg'
+        },
+        {
+          id: 'r3_ext',
+          title: 'Dev.java Official OOP Tutorials',
+          type: 'Additional Resource',
+          url: 'https://dev.java/learn/oop/',
+          duration_hours: 3.0,
+          difficulty: 'Beginner to Intermediate',
+          provider: 'Oracle Dev.java Portal',
+          description: 'Modern tutorial from Oracle engineers covering class design, records, sealed classes, interfaces, and clean code principles.',
           skill_name: 'Java Basics & OOP'
         }
       ]
@@ -120,7 +201,42 @@ export const MOCK_ROADMAP: PersonalizedRoadmap = {
       prerequisites: ['Java Basics & OOP'],
       explanation: 'Prerequisite requirement: Must master OOP principles before Java Collections.',
       completion_criteria: 'Score > 75% in Collections quiz.',
-      resources: []
+      resources: [
+        {
+          id: 'r4_doc',
+          title: 'Oracle Java Collections Framework & Exceptions Trail',
+          type: 'Official Documentation',
+          url: 'https://docs.oracle.com/javase/tutorial/collections/index.html',
+          duration_hours: 4.5,
+          difficulty: 'Intermediate',
+          provider: 'Oracle Java Documentation',
+          description: 'Official documentation for List, Set, Map interfaces, ArrayList, HashMap, Streams API, try-catch-finally, and custom exceptions.',
+          skill_name: 'Java Collections & Exception Handling'
+        },
+        {
+          id: 'r4_vid',
+          title: 'Java Collections Framework & Streams Tutorial',
+          type: 'Video Resource',
+          url: 'https://www.youtube.com/watch?v=viTHc_4XfCA',
+          duration_hours: 3.5,
+          difficulty: 'Intermediate',
+          provider: 'YouTube (Amigoscode)',
+          description: 'In-depth visual walkthrough of Java collections data structures, lambda expressions, Streams API filter/map, and error handling.',
+          skill_name: 'Java Collections & Exception Handling',
+          thumbnail_url: 'https://img.youtube.com/vi/viTHc_4XfCA/hqdefault.jpg'
+        },
+        {
+          id: 'r4_ext',
+          title: 'Dev.java Collections & Streams Guide',
+          type: 'Additional Resource',
+          url: 'https://dev.java/learn/api/collections/',
+          duration_hours: 3.0,
+          difficulty: 'Intermediate',
+          provider: 'Oracle Dev.java Portal',
+          description: 'Comprehensive guide on picking optimal data structures, collection operations, functional programming, and try-with-resources.',
+          skill_name: 'Java Collections & Exception Handling'
+        }
+      ]
     },
     {
       id: 'item_5',
@@ -134,7 +250,42 @@ export const MOCK_ROADMAP: PersonalizedRoadmap = {
       explanation: 'Core framework goal: Spring Boot connects Java language to database APIs.',
       completion_criteria: 'Deploy a Spring Boot microservice.',
       assessment_id: 'quiz_spring_boot',
-      resources: []
+      resources: [
+        {
+          id: 'r5_doc',
+          title: 'Spring Boot Reference Documentation',
+          type: 'Official Documentation',
+          url: 'https://docs.spring.io/spring-boot/docs/current/reference/html/',
+          duration_hours: 5.0,
+          difficulty: 'Intermediate',
+          provider: 'Spring Official Documentation',
+          description: 'Authoritative documentation for Spring Boot 3 auto-configuration, starters, application properties, actuators, and profile management.',
+          skill_name: 'Spring Boot & Dependency Injection'
+        },
+        {
+          id: 'r5_vid',
+          title: 'Spring Boot 3 Full Course - Build Microservices',
+          type: 'Video Resource',
+          url: 'https://www.youtube.com/watch?v=9SGDpanrc8U',
+          duration_hours: 4.5,
+          difficulty: 'Intermediate',
+          provider: 'YouTube (Amigoscode)',
+          description: 'Complete production tutorial building Spring Boot REST microservices from scratch with Spring Data JPA and PostgreSQL.',
+          skill_name: 'Spring Boot & Dependency Injection',
+          thumbnail_url: 'https://img.youtube.com/vi/9SGDpanrc8U/hqdefault.jpg'
+        },
+        {
+          id: 'r5_ext',
+          title: 'Spring.io Official Guide - Building an Application with Spring Boot',
+          type: 'Additional Resource',
+          url: 'https://spring.io/guides/gs/spring-boot/',
+          duration_hours: 2.5,
+          difficulty: 'Intermediate',
+          provider: 'Spring.io Official Guides',
+          description: 'Official getting started guide detailing Spring Initializr, executable JAR packaging, embedded Tomcat server, and REST endpoints.',
+          skill_name: 'Spring Boot & Dependency Injection'
+        }
+      ]
     },
     {
       id: 'item_6',
@@ -147,7 +298,42 @@ export const MOCK_ROADMAP: PersonalizedRoadmap = {
       prerequisites: ['Spring Boot & Dependency Injection'],
       explanation: 'Essential for Java Backend Developer target role.',
       completion_criteria: 'Pass REST API benchmark assessment.',
-      resources: []
+      resources: [
+        {
+          id: 'r6_doc',
+          title: 'Spring MVC REST Web Services Documentation',
+          type: 'Official Documentation',
+          url: 'https://docs.spring.io/spring-framework/reference/web/webmvc.html',
+          duration_hours: 4.0,
+          difficulty: 'Intermediate',
+          provider: 'Spring Official Documentation',
+          description: 'Official Spring Web MVC documentation covering @RestController, @GetMapping, @PostMapping, DTO serialization, and HTTP response codes.',
+          skill_name: 'RESTful API Architecture'
+        },
+        {
+          id: 'r6_vid',
+          title: 'Building RESTful Web Services with Spring Boot',
+          type: 'Video Resource',
+          url: 'https://www.youtube.com/watch?v=lsMQRaeKNDk',
+          duration_hours: 3.5,
+          difficulty: 'Intermediate',
+          provider: 'YouTube (in28minutes)',
+          description: 'Learn RESTful principles, URI design, Jackson JSON parsing, global exception handling (@ControllerAdvice), and Swagger OpenAPI docs.',
+          skill_name: 'RESTful API Architecture',
+          thumbnail_url: 'https://img.youtube.com/vi/lsMQRaeKNDk/hqdefault.jpg'
+        },
+        {
+          id: 'r6_ext',
+          title: 'Spring.io Official Guide - Building a RESTful Web Service',
+          type: 'Additional Resource',
+          url: 'https://spring.io/guides/gs/rest-service/',
+          duration_hours: 2.5,
+          difficulty: 'Intermediate',
+          provider: 'Spring.io Official Guides',
+          description: 'Official tutorial for exposing REST endpoints, managing HTTP request body/params, and configuring JSON representations.',
+          skill_name: 'RESTful API Architecture'
+        }
+      ]
     },
     {
       id: 'item_7',
@@ -160,7 +346,42 @@ export const MOCK_ROADMAP: PersonalizedRoadmap = {
       prerequisites: ['RESTful API Architecture'],
       explanation: 'Secures REST endpoints built in Phase 6.',
       completion_criteria: 'Implement JWT Spring Security middleware.',
-      resources: []
+      resources: [
+        {
+          id: 'r7_doc',
+          title: 'Spring Security Reference Documentation',
+          type: 'Official Documentation',
+          url: 'https://docs.spring.io/spring-security/reference/index.html',
+          duration_hours: 4.5,
+          difficulty: 'Advanced',
+          provider: 'Spring Official Documentation',
+          description: 'Official reference for Spring Security 6: SecurityFilterChain, UserDetailsService, BCrypt password hashing, and stateless JWT filters.',
+          skill_name: 'Security & JWT Authentication'
+        },
+        {
+          id: 'r7_vid',
+          title: 'Spring Security 6 & JWT Token Authentication Tutorial',
+          type: 'Video Resource',
+          url: 'https://www.youtube.com/watch?v=HER3b2r1E5M',
+          duration_hours: 4.0,
+          difficulty: 'Advanced',
+          provider: 'YouTube (Bouali Ali)',
+          description: 'Full step-by-step implementation of JWT user registration, login, token generation, authorization headers, and protected routes.',
+          skill_name: 'Security & JWT Authentication',
+          thumbnail_url: 'https://img.youtube.com/vi/HER3b2r1E5M/hqdefault.jpg'
+        },
+        {
+          id: 'r7_ext',
+          title: 'Spring.io Official Guide - Securing a Web Application',
+          type: 'Additional Resource',
+          url: 'https://spring.io/guides/gs/securing-web/',
+          duration_hours: 2.5,
+          difficulty: 'Advanced',
+          provider: 'Spring.io Official Guides',
+          description: 'Official walkthrough configuring security rules, form login, logout handlers, and role-based endpoint permissions.',
+          skill_name: 'Security & JWT Authentication'
+        }
+      ]
     }
   ]
 };

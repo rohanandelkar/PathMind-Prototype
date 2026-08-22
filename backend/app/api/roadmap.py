@@ -10,9 +10,16 @@ from app.services.roadmap_generator import build_personalized_roadmap
 
 router = APIRouter()
 
+from app.services.recommender import find_resources_for_skill
+
 def roadmap_db_to_schema(db_roadmap: RoadmapDB) -> PersonalizedRoadmap:
     items_data = json.loads(db_roadmap.roadmap_items_json or "[]")
-    items = [RoadmapItem.model_validate(item) for item in items_data]
+    items = []
+    for item_dict in items_data:
+        item = RoadmapItem.model_validate(item_dict)
+        # Always synchronize with strict topic-level mapped resources
+        item.resources = find_resources_for_skill(item.skill_name)
+        items.append(item)
 
     return PersonalizedRoadmap(
         roadmap_id=db_roadmap.roadmap_id,

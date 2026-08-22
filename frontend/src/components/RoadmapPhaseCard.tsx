@@ -5,7 +5,7 @@ import { RoadmapItem } from '@/lib/types';
 import ResourceCard from './ResourceCard';
 import AssessmentModal from './AssessmentModal';
 import FeedbackModal from './FeedbackModal';
-import { CheckCircle2, Lock, PlayCircle, Info, Clock, Award, Sparkles, Sliders, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle2, Lock, PlayCircle, Info, Clock, Award, Sparkles, Sliders, ChevronDown, ChevronUp, BookOpen, Video } from 'lucide-react';
 
 interface RoadmapPhaseCardProps {
   item: RoadmapItem;
@@ -27,13 +27,13 @@ export default function RoadmapPhaseCard({ item, onRefreshRoadmap }: RoadmapPhas
     }
     if (item.status === 'In-Progress') {
       return (
-        <span className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20 animate-pulse">
+        <span className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-500/10 text-primary border border-brand-500/20 animate-pulse">
           <PlayCircle className="w-3.5 h-3.5" /> Active Phase
         </span>
       );
     }
     return (
-      <span className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+      <span className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-theme-hover text-theme-muted border border-theme-border">
         <Lock className="w-3.5 h-3.5" /> Locked
       </span>
     );
@@ -43,10 +43,10 @@ export default function RoadmapPhaseCard({ item, onRefreshRoadmap }: RoadmapPhas
     <div
       className={`rounded-2xl border transition-all duration-300 ${
         item.status === 'In-Progress'
-          ? 'bg-slate-900/90 border-sky-500/50 shadow-xl shadow-sky-500/5 ring-1 ring-sky-500/20'
+          ? 'bg-theme-surface border-brand-500/50 shadow-xl shadow-brand-500/5 ring-1 ring-brand-500/20'
           : item.status === 'Completed'
-          ? 'bg-slate-900/60 border-emerald-500/30'
-          : 'bg-slate-900/40 border-slate-800/80 opacity-80'
+          ? 'bg-theme-surface border-emerald-500/30'
+          : 'bg-theme-surface/70 border-theme-border opacity-80'
       }`}
     >
       {/* Header Bar */}
@@ -57,8 +57,8 @@ export default function RoadmapPhaseCard({ item, onRefreshRoadmap }: RoadmapPhas
               item.status === 'Completed'
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                 : item.status === 'In-Progress'
-                ? 'bg-sky-500/20 text-sky-400 border border-sky-500/30'
-                : 'bg-slate-800 text-slate-400 border border-slate-700'
+                ? 'bg-brand-500/20 text-primary border border-brand-500/30'
+                : 'bg-theme-hover text-theme-muted border border-theme-border'
             }`}
           >
             {item.phase_number}
@@ -66,20 +66,20 @@ export default function RoadmapPhaseCard({ item, onRefreshRoadmap }: RoadmapPhas
 
           <div>
             <div className="flex items-center gap-2 flex-wrap mb-1">
-              <h3 className="text-base font-bold text-white">{item.phase_title}</h3>
+              <h3 className="text-base font-bold text-theme-main">{item.phase_title}</h3>
               {getStatusBadge()}
             </div>
-            <p className="text-xs text-slate-300 line-clamp-1">{item.description}</p>
+            <p className="text-xs text-theme-muted line-clamp-1">{item.description}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
-            <Clock className="w-3.5 h-3.5 text-slate-400" /> ~{item.estimated_days} days
+          <span className="text-xs text-theme-muted font-medium flex items-center gap-1">
+            <Clock className="w-3.5 h-3.5 text-theme-muted" /> ~{item.estimated_days} days
           </span>
           <button
             onClick={() => setExpanded(!expanded)}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-theme-hover hover:opacity-90 text-theme-main transition-colors border border-theme-border"
           >
             {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
@@ -88,59 +88,95 @@ export default function RoadmapPhaseCard({ item, onRefreshRoadmap }: RoadmapPhas
 
       {/* Expanded Phase Content */}
       {expanded && (
-        <div className="px-5 pb-5 pt-2 border-t border-slate-800/80 space-y-4">
+        <div className="px-5 pb-5 pt-2 border-t border-theme-border space-y-4">
           
           {/* AI Explanation Banner */}
-          <div className="bg-sky-950/40 border border-sky-500/20 rounded-xl p-3.5 flex items-start gap-3">
-            <Sparkles className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+          <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-3.5 flex items-start gap-3">
+            <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
             <div>
-              <span className="text-[11px] font-semibold text-sky-400 uppercase tracking-wider">AI Recommender Explanation</span>
-              <p className="text-xs text-sky-200/90 leading-relaxed mt-0.5">{item.explanation}</p>
+              <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">AI Recommender Explanation</span>
+              <p className="text-xs text-theme-main leading-relaxed mt-0.5">{item.explanation}</p>
             </div>
           </div>
 
           {/* Prerequisites & Completion Criteria */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-            <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Prerequisites</span>
+            <div className="bg-theme-hover/60 border border-theme-border rounded-xl p-3">
+              <span className="text-[11px] font-semibold text-theme-muted uppercase tracking-wider block mb-1">Prerequisites</span>
               {item.prerequisites && item.prerequisites.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {item.prerequisites.map((p, idx) => (
-                    <span key={idx} className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] border border-slate-700">
+                    <span key={idx} className="px-2 py-0.5 rounded bg-theme-surface text-theme-main text-[11px] border border-theme-border">
                       {p}
                     </span>
                   ))}
                 </div>
               ) : (
-                <span className="text-slate-400">None (Foundational Skill)</span>
+                <span className="text-theme-muted">None (Foundational Skill)</span>
               )}
             </div>
 
-            <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Completion Criteria</span>
-              <span className="text-slate-300">{item.completion_criteria}</span>
+            <div className="bg-theme-hover/60 border border-theme-border rounded-xl p-3">
+              <span className="text-[11px] font-semibold text-theme-muted uppercase tracking-wider block mb-1">Completion Criteria</span>
+              <span className="text-theme-main">{item.completion_criteria}</span>
             </div>
           </div>
 
           {/* Practical Project Prompt */}
           {item.project_prompt && (
-            <div className="bg-purple-950/30 border border-purple-500/20 rounded-xl p-3.5">
-              <span className="text-[11px] font-semibold text-purple-400 uppercase tracking-wider block mb-1">Practical Capstone Task</span>
-              <p className="text-xs text-purple-200">{item.project_prompt}</p>
+            <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-3.5">
+              <span className="text-[11px] font-semibold text-primary uppercase tracking-wider block mb-1">Practical Capstone Task</span>
+              <p className="text-xs text-theme-main">{item.project_prompt}</p>
             </div>
           )}
 
-          {/* Learning Resources List */}
-          <div>
-            <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider block mb-2">Curated Resources</span>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {item.resources && item.resources.length > 0 ? (
-                item.resources.map((res) => <ResourceCard key={res.id} resource={res} />)
-              ) : (
-                <p className="text-xs text-slate-400 col-span-2 py-2">Resources loading from pgvector RAG database...</p>
-              )}
-            </div>
-          </div>
+          {/* Topic-Specific Learning Resources */}
+          {(() => {
+            const videos = item.resources?.filter(r => r.type === "Video Resource" || r.type.toLowerCase().includes("video") || r.provider.toLowerCase().includes("youtube") || r.url.includes("youtube.com")) || [];
+            const docs = item.resources?.filter(r => r.type === "Official Documentation" || r.type.toLowerCase().includes("doc")) || [];
+
+            return (
+              <div className="space-y-4">
+                {/* 🎥 YouTube Videos Section */}
+                {videos.length > 0 && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold text-rose-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <Video className="w-3.5 h-3.5 text-rose-400" />
+                        Topic Video Tutorials ({videos.length})
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {videos.map((res) => (
+                        <ResourceCard key={res.id} resource={res} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 📘 Official Documentation Section */}
+                {docs.length > 0 && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold text-sky-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <BookOpen className="w-3.5 h-3.5 text-sky-400" />
+                        Official Documentation ({docs.length})
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {docs.map((res) => (
+                        <ResourceCard key={res.id} resource={res} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {(!item.resources || item.resources.length === 0) && (
+                  <p className="text-xs text-slate-400 py-2">Loading topic-specific official documentation and video resources...</p>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Phase Actions */}
           <div className="pt-2 flex items-center justify-between flex-wrap gap-2">

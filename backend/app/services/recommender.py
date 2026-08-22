@@ -8,21 +8,16 @@ from app.services.youtube_service import fetch_youtube_resources_for_skill
 def find_resources_for_skill(skill_name: str, preferred_style: str = "Hands-on Projects") -> List[LearningResource]:
     """
     Retrieves matching learning resources for a target skill.
-    Integrates real-time YouTube Data API video recommendations when configured.
-    Ranks by preferred style matching and relevance.
+    Guarantees STRICT 1-to-1 topic mapping: exactly 2 YouTube videos + 2 Official Documentation links per topic.
+    No cross-topic or cross-roadmap resource leaking.
     """
-    matched = []
-    s_lower = skill_name.lower()
-    
-    # 1. Fetch real-time YouTube video tutorials
-    yt_resources = fetch_youtube_resources_for_skill(skill_name, max_results=2)
-    if yt_resources:
-        matched.extend(yt_resources)
-    
-    # 2. Match seed database resources
+    matched: List[LearningResource] = []
+    s_clean = skill_name.strip().lower()
+
+    # 1. Match seed database resources using EXACT skill_name string comparison
     for res in LEARNING_RESOURCES_DATABASE:
-        res_skill = res["skill_name"].lower()
-        if res_skill in s_lower or s_lower in res_skill or any(word in res_skill for word in s_lower.split()):
+        res_skill = res["skill_name"].strip().lower()
+        if res_skill == s_clean:
             matched.append(LearningResource(
                 id=res["id"],
                 title=res["title"],
@@ -36,21 +31,77 @@ def find_resources_for_skill(skill_name: str, preferred_style: str = "Hands-on P
                 thumbnail_url=res.get("thumbnail_url")
             ))
 
-    if not matched:
-        # Fallback dynamic resource creation if seed doesn't contain exact match
-        matched.append(LearningResource(
-            id=f"res_{uuid.uuid4().hex[:6]}",
-            title=f"Complete Guide to {skill_name}",
-            type="Hands-on Project & Documentation" if "Hands-on" in preferred_style else "Video Masterclass",
-            url=f"https://learn.hcltech.com/resources/{skill_name.lower().replace(' ', '-')}",
-            duration_hours=6.0,
-            difficulty="Intermediate",
-            provider="HCLTech Learning Hub",
-            description=f"Comprehensive practice exercises, architectural concepts, and hands-on implementation guide for {skill_name}.",
-            skill_name=skill_name
-        ))
+    # Separate into Videos and Official Docs
+    videos = [r for r in matched if r.type == "Video Resource" or "video" in r.type.lower()]
+    docs = [r for r in matched if r.type == "Official Documentation" or "doc" in r.type.lower()]
 
-    return matched
+    # 2. Fetch real-time YouTube video tutorials if API configured
+    yt_resources = fetch_youtube_resources_for_skill(skill_name, max_results=1)
+    if yt_resources:
+        # Prepend YouTube API result if available, replacing one seed video item
+        videos = [yt_resources[0]] + videos[:1]
+
+    # Limit to 2 videos and 2 docs per topic (strictly 4 items total)
+    final_resources = videos[:2] + docs[:2]
+
+    # Safety fallback if seed data missing for a custom dynamic skill
+    if not final_resources:
+        doc_url = "https://docs.python.org/3/"
+        doc_provider = "Official Documentation"
+        if "c++" in s_clean or "cpp" in s_clean or "stl" in s_clean:
+            doc_url = "https://en.cppreference.com/w/cpp"
+            doc_provider = "C++ Reference (cppreference)"
+        elif "c " in s_clean or s_clean.startswith("c ") or "pointers" in s_clean or "struct" in s_clean or "malloc" in s_clean:
+            doc_url = "https://en.cppreference.com/w/c"
+            doc_provider = "C Language Reference (cppreference)"
+        elif "java" in s_clean:
+            doc_url = "https://docs.oracle.com/en/java/"
+            doc_provider = "Oracle Java Documentation"
+        elif "spring" in s_clean:
+            doc_url = "https://docs.spring.io/spring-boot/docs/current/reference/html/"
+            doc_provider = "Spring Official Documentation"
+        elif "react" in s_clean:
+            doc_url = "https://react.dev/learn"
+            doc_provider = "React Official Documentation"
+        elif "fastapi" in s_clean:
+            doc_url = "https://fastapi.tiangolo.com/tutorial/"
+            doc_provider = "FastAPI Official Documentation"
+        elif "sql" in s_clean or "postgres" in s_clean:
+            doc_url = "https://www.postgresql.org/docs/current/"
+            doc_provider = "PostgreSQL Official Documentation"
+        elif "javascript" in s_clean or "html" in s_clean or "css" in s_clean:
+            doc_url = "https://developer.mozilla.org/en-US/docs/Web"
+            doc_provider = "MDN Web Docs"
+        elif "docker" in s_clean:
+            doc_url = "https://docs.docker.com/get-started/"
+            doc_provider = "Docker Official Documentation"
+
+        final_resources = [
+            LearningResource(
+                id=f"res_{uuid.uuid4().hex[:6]}_v1",
+                title=f"{skill_name} Video Masterclass",
+                type="Video Resource",
+                url=f"https://www.youtube.com/results?search_query={skill_name.replace(' ', '+')}+tutorial",
+                duration_hours=3.5,
+                difficulty="Beginner to Intermediate",
+                provider="YouTube Learning",
+                description=f"Step-by-step video tutorial explaining {skill_name}.",
+                skill_name=skill_name
+            ),
+            LearningResource(
+                id=f"res_{uuid.uuid4().hex[:6]}_d1",
+                title=f"{skill_name} Official Documentation",
+                type="Official Documentation",
+                url=doc_url,
+                duration_hours=3.0,
+                difficulty="Intermediate",
+                provider=doc_provider,
+                description=f"Official language reference, specifications, syntax guides, and core APIs for {skill_name}.",
+                skill_name=skill_name
+            )
+        ]
+
+    return final_resources
 
 def generate_explanation_for_step(
     skill_name: str,

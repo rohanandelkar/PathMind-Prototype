@@ -49,29 +49,29 @@ function AssistantContent() {
     <div className="space-y-6 max-w-4xl mx-auto py-2">
       
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div className="flex items-center justify-between border-b border-theme-border pb-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
+          <div className="p-3 rounded-2xl bg-brand-500/10 text-primary border border-brand-500/20">
             <Bot className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">AI Personal Learning Mentor</h1>
-            <p className="text-xs text-slate-400">Contextual conversational assistance powered by Gemini RAG & LangGraph.</p>
+            <h1 className="text-2xl font-bold text-theme-main tracking-tight">AI Personal Learning Mentor</h1>
+            <p className="text-xs text-theme-muted">Contextual conversational assistance powered by Gemini RAG & LangGraph.</p>
           </div>
         </div>
 
         {messages.length > 0 && (
           <button
             onClick={handleNewConversation}
-            className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-sky-500/40 text-slate-300 hover:text-white font-semibold text-xs transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-xl bg-theme-surface border border-theme-border hover:border-brand-500/40 text-theme-main font-semibold text-xs transition-colors flex items-center gap-1.5"
           >
-            <PlusCircle className="w-4 h-4 text-sky-400" /> New Conversation
+            <PlusCircle className="w-4 h-4 text-primary" /> New Conversation
           </button>
         )}
       </div>
 
       {/* Chat Window */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl h-[560px] shadow-2xl flex flex-col overflow-hidden">
+      <div className="bg-theme-surface border border-theme-border rounded-2xl h-[560px] shadow-2xl flex flex-col overflow-hidden">
         
         {/* Messages Feed or Onboarding Welcome */}
         <div className="flex-1 p-6 overflow-y-auto space-y-4">
@@ -84,15 +84,15 @@ function AssistantContent() {
                 className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {msg.sender === 'ai' && (
-                  <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-xl bg-brand-500/20 text-primary border border-brand-500/30 flex items-center justify-center shrink-0">
                     <Bot className="w-4.5 h-4.5" />
                   </div>
                 )}
                 <div
                   className={`p-4 rounded-2xl max-w-[80%] text-xs sm:text-sm leading-relaxed ${
                     msg.sender === 'user'
-                      ? 'bg-sky-600 text-white rounded-tr-none shadow-md shadow-sky-600/10'
-                      : 'bg-slate-800/80 text-slate-200 border border-slate-700/60 rounded-tl-none'
+                      ? 'bg-brand-600 text-white rounded-tr-none shadow-md shadow-brand-600/10'
+                      : 'bg-theme-hover text-theme-main border border-theme-border rounded-tl-none'
                   }`}
                 >
                   <p>{msg.content}</p>
@@ -103,26 +103,26 @@ function AssistantContent() {
           )}
 
           {loading && (
-            <div className="flex gap-2 items-center text-slate-400 text-xs py-2">
-              <RefreshCw className="w-4 h-4 animate-spin text-sky-400" /> AI Mentor evaluating prerequisite graph & context...
+            <div className="flex gap-2 items-center text-theme-muted text-xs py-2">
+              <RefreshCw className="w-4 h-4 animate-spin text-primary" /> AI Mentor evaluating prerequisite graph & context...
             </div>
           )}
         </div>
 
         {/* Input Bar */}
-        <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center gap-3">
+        <div className="p-4 bg-theme-surface border-t border-theme-border flex items-center gap-3">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask mentor a question..."
-            className="flex-1 px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
+            className="flex-1 px-4 py-3 bg-theme-hover border border-theme-border rounded-xl text-xs sm:text-sm text-theme-main placeholder:text-theme-muted focus:outline-none focus:border-brand-500"
           />
           <button
             onClick={() => handleSend()}
             disabled={loading || !input.trim()}
-            className="px-5 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm transition-all disabled:opacity-50 flex items-center gap-2"
+            className="px-5 py-3 rounded-xl bg-gradient-to-r from-brand-500 to-accent-red hover:from-brand-600 hover:to-brand-700 text-white font-semibold text-xs sm:text-sm transition-all disabled:opacity-50 flex items-center gap-2"
           >
             <Send className="w-4 h-4" /> Send
           </button>

@@ -38,10 +38,10 @@ export default function FeedbackModal({ itemId, skillName, isOpen, onClose, onFe
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-          <h3 className="text-base font-bold text-white">Feedback for "{skillName}"</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white p-1 rounded-lg">
+      <div className="bg-theme-surface border border-theme-border rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+        <div className="flex items-center justify-between border-b border-theme-border pb-3 mb-4">
+          <h3 className="text-base font-bold text-theme-main">Feedback for "{skillName}"</h3>
+          <button onClick={onClose} className="text-theme-muted hover:text-theme-main p-1 rounded-lg">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -52,7 +52,7 @@ export default function FeedbackModal({ itemId, skillName, isOpen, onClose, onFe
           </div>
         ) : (
           <div className="space-y-3">
-            <p className="text-xs text-slate-400">Tell your AI mentor how this phase fits your current level:</p>
+            <p className="text-xs text-theme-muted">Tell your AI mentor how this phase fits your current level:</p>
             {feedbackOptions.map((opt) => {
               const Icon = opt.icon;
               return (
@@ -60,14 +60,14 @@ export default function FeedbackModal({ itemId, skillName, isOpen, onClose, onFe
                   key={opt.type}
                   onClick={() => handleFeedback(opt.type)}
                   disabled={submitting}
-                  className="w-full p-3 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-sky-500/50 rounded-xl text-left transition-all flex items-start gap-3 group"
+                  className="w-full p-3 bg-theme-hover border border-theme-border hover:border-brand-500/50 rounded-xl text-left transition-all flex items-start gap-3 group"
                 >
-                  <div className="p-2 rounded-lg bg-sky-500/10 text-sky-400 group-hover:bg-sky-500/20 transition-colors">
+                  <div className="p-2 rounded-lg bg-brand-500/10 text-primary group-hover:bg-brand-500/20 transition-colors">
                     <Icon className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-semibold text-white group-hover:text-sky-300">{opt.label}</h4>
-                    <p className="text-[11px] text-slate-400">{opt.desc}</p>
+                    <h4 className="text-xs font-semibold text-theme-main group-hover:text-primary">{opt.label}</h4>
+                    <p className="text-[11px] text-theme-muted">{opt.desc}</p>
                   </div>
                 </button>
               );

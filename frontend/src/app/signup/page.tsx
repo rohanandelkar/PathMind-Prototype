@@ -73,31 +73,31 @@ export default function SignupPage() {
   if (loading) return null;
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-theme-bg flex items-center justify-center p-4 transition-colors duration-200">
       {/* Background Gradient Blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-sky-600/20 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-accent-red/10 rounded-full blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-violet-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-sky-500/30">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-accent-red flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-500/30">
               P
             </div>
-            <span className="text-2xl font-bold text-white tracking-tight">PathMind</span>
+            <span className="text-2xl font-bold text-theme-main tracking-tight">PathMind</span>
           </div>
-          <h1 className="text-xl font-semibold text-slate-200">Create your account</h1>
-          <p className="text-sm text-slate-500 mt-1">Start your personalized AI-powered learning journey</p>
+          <h1 className="text-xl font-semibold text-theme-main">Create your account</h1>
+          <p className="text-sm text-theme-muted mt-1">Start your personalized AI-powered learning journey</p>
         </div>
 
         {/* Card */}
-        <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 shadow-2xl">
+        <div className="bg-theme-surface border border-theme-border rounded-2xl p-8 shadow-2xl">
           {/* Error Banner */}
           {error && (
-            <div className="mb-5 flex items-start gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3">
+            <div className="mb-5 flex items-start gap-2 text-sm text-rose-500 bg-rose-500/10 border border-rose-500/20 rounded-lg px-4 py-3">
               <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -108,7 +108,7 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Full Name */}
             <div>
-              <label htmlFor="signup-name" className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label htmlFor="signup-name" className="block text-sm font-medium text-theme-main mb-1.5">
                 Full name
               </label>
               <input
@@ -119,13 +119,13 @@ export default function SignupPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Jane Smith"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 rounded-xl bg-theme-hover border border-theme-border text-theme-main placeholder:text-theme-muted text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="signup-email" className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label htmlFor="signup-email" className="block text-sm font-medium text-theme-main mb-1.5">
                 Email address
               </label>
               <input
@@ -136,13 +136,13 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 rounded-xl bg-theme-hover border border-theme-border text-theme-main placeholder:text-theme-muted text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label htmlFor="signup-password" className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label htmlFor="signup-password" className="block text-sm font-medium text-theme-main mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -154,12 +154,12 @@ export default function SignupPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Min 8 chars, uppercase, number, symbol"
-                  className="w-full px-4 py-2.5 pr-11 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-2.5 pr-11 rounded-xl bg-theme-hover border border-theme-border text-theme-main placeholder:text-theme-muted text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-theme-muted hover:text-theme-main transition-colors"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -183,13 +183,13 @@ export default function SignupPage() {
                       <div
                         key={i}
                         className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                          i < strength.score ? strength.color : "bg-slate-700"
+                          i < strength.score ? strength.color : "bg-theme-border"
                         }`}
                       />
                     ))}
                   </div>
                   <p className={`text-xs font-medium ${
-                    strength.score >= 3 ? "text-emerald-400" : strength.score >= 2 ? "text-yellow-400" : "text-red-400"
+                    strength.score >= 3 ? "text-emerald-400" : strength.score >= 2 ? "text-amber-400" : "text-rose-400"
                   }`}>
                     {strength.label}
                   </p>
@@ -199,7 +199,7 @@ export default function SignupPage() {
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="signup-confirm" className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label htmlFor="signup-confirm" className="block text-sm font-medium text-theme-main mb-1.5">
                 Confirm password
               </label>
               <input
@@ -210,14 +210,14 @@ export default function SignupPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
-                className={`w-full px-4 py-2.5 rounded-xl bg-slate-800 border text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
+                className={`w-full px-4 py-2.5 rounded-xl bg-theme-hover border text-theme-main placeholder:text-theme-muted text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
                   confirmPassword && confirmPassword !== password
-                    ? "border-red-500/60 focus:ring-red-500"
-                    : "border-slate-700 focus:ring-sky-500"
+                    ? "border-rose-500/60 focus:ring-rose-500"
+                    : "border-theme-border focus:ring-brand-500"
                 }`}
               />
               {confirmPassword && confirmPassword !== password && (
-                <p className="text-xs text-red-400 mt-1">Passwords do not match</p>
+                <p className="text-xs text-rose-400 mt-1">Passwords do not match</p>
               )}
             </div>
 
@@ -226,7 +226,7 @@ export default function SignupPage() {
               id="signup-submit"
               type="submit"
               disabled={submitting}
-              className="w-full py-2.5 px-4 mt-2 bg-gradient-to-r from-sky-500 to-violet-600 hover:from-sky-400 hover:to-violet-500 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-2.5 px-4 mt-2 bg-gradient-to-r from-brand-500 to-accent-red hover:from-brand-600 hover:to-brand-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-brand-500/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {submitting ? (
                 <>
@@ -240,8 +240,8 @@ export default function SignupPage() {
           </form>
 
           {/* Requirements hint */}
-          <div className="mt-5 p-3 bg-slate-800/60 rounded-xl border border-slate-700/50">
-            <p className="text-xs text-slate-500 font-medium mb-2">Password requirements:</p>
+          <div className="mt-5 p-3 bg-theme-hover rounded-xl border border-theme-border">
+            <p className="text-xs text-theme-muted font-medium mb-2">Password requirements:</p>
             <ul className="space-y-1">
               {[
                 { check: password.length >= 8, label: "At least 8 characters" },
@@ -249,7 +249,7 @@ export default function SignupPage() {
                 { check: /[0-9]/.test(password), label: "One number" },
                 { check: /[^A-Za-z0-9]/.test(password), label: "One special character" },
               ].map(({ check, label }) => (
-                <li key={label} className={`flex items-center gap-2 text-xs transition-colors ${check ? "text-emerald-400" : "text-slate-500"}`}>
+                <li key={label} className={`flex items-center gap-2 text-xs transition-colors ${check ? "text-emerald-400" : "text-theme-muted"}`}>
                   <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                     {check ? (
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -265,9 +265,9 @@ export default function SignupPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-slate-500 mt-6">
+        <p className="text-center text-sm text-theme-muted mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-sky-400 hover:text-sky-300 font-medium transition-colors">
+          <Link href="/login" className="text-primary hover:opacity-80 font-medium transition-colors">
             Sign in
           </Link>
         </p>

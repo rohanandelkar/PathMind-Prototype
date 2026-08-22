@@ -52,28 +52,28 @@ export default function CreateAssessmentCard({ onAssessmentCreated }: CreateAsse
   };
 
   return (
-    <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden space-y-6">
+    <div className="bg-theme-surface border border-theme-border rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden space-y-6">
       
       {/* Header Accent */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-theme-border pb-6">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-semibold border border-purple-500/20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-primary text-xs font-semibold border border-brand-500/20">
             <Sparkles className="w-3.5 h-3.5" /> AI Quiz Generator
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold text-theme-main tracking-tight">
             Create Custom Skill Assessment
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-theme-muted">
             Dynamically configured for your selected target track ({learningPath || 'Your Roadmap'}).
           </p>
         </div>
       </div>
 
       {loading ? (
-        <div className="py-12 flex items-center justify-center gap-3 text-slate-400">
-          <Loader2 className="w-5 h-5 animate-spin text-purple-400" />
+        <div className="py-12 flex items-center justify-center gap-3 text-theme-muted">
+          <Loader2 className="w-5 h-5 animate-spin text-primary" />
           <span className="text-xs">Loading roadmap topics...</span>
         </div>
       ) : (
@@ -81,16 +81,16 @@ export default function CreateAssessmentCard({ onAssessmentCreated }: CreateAsse
           
           {/* Select Topic */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <Layers className="w-4 h-4 text-purple-400" /> Select Topic
+            <label className="text-xs font-semibold text-theme-main flex items-center gap-1.5">
+              <Layers className="w-4 h-4 text-primary" /> Select Topic
             </label>
             <select
               value={selectedTopic}
               onChange={(e) => setSelectedTopic(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full bg-theme-hover border border-theme-border text-theme-main text-xs rounded-xl p-3 focus:outline-none focus:border-brand-500 transition-colors"
             >
               {topics.map((tp, idx) => (
-                <option key={idx} value={tp}>
+                <option key={idx} value={tp} className="bg-theme-surface text-theme-main">
                   {tp}
                 </option>
               ))}
@@ -99,51 +99,51 @@ export default function CreateAssessmentCard({ onAssessmentCreated }: CreateAsse
 
           {/* Difficulty */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <label className="text-xs font-semibold text-theme-main flex items-center gap-1.5">
               <Award className="w-4 h-4 text-amber-400" /> Difficulty
             </label>
             <select
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full bg-theme-hover border border-theme-border text-theme-main text-xs rounded-xl p-3 focus:outline-none focus:border-brand-500 transition-colors"
             >
-              <option value="Easy">Easy</option>
-              <option value="Medium">Medium</option>
-              <option value="Hard">Hard</option>
+              <option value="Easy" className="bg-theme-surface text-theme-main">Easy</option>
+              <option value="Medium" className="bg-theme-surface text-theme-main">Medium</option>
+              <option value="Hard" className="bg-theme-surface text-theme-main">Hard</option>
             </select>
           </div>
 
           {/* Number of Questions */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <HelpCircle className="w-4 h-4 text-sky-400" /> Number of Questions
+            <label className="text-xs font-semibold text-theme-main flex items-center gap-1.5">
+              <HelpCircle className="w-4 h-4 text-primary" /> Number of Questions
             </label>
             <select
               value={numQuestions}
               onChange={(e) => setNumQuestions(Number(e.target.value))}
-              className="w-full bg-slate-950 border border-slate-800 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full bg-theme-hover border border-theme-border text-theme-main text-xs rounded-xl p-3 focus:outline-none focus:border-brand-500 transition-colors"
             >
-              <option value={5}>5 Questions</option>
-              <option value={10}>10 Questions</option>
-              <option value={15}>15 Questions</option>
-              <option value={20}>20 Questions</option>
+              <option value={5} className="bg-theme-surface text-theme-main">5 Questions</option>
+              <option value={10} className="bg-theme-surface text-theme-main">10 Questions</option>
+              <option value={15} className="bg-theme-surface text-theme-main">15 Questions</option>
+              <option value={20} className="bg-theme-surface text-theme-main">20 Questions</option>
             </select>
           </div>
 
           {/* Time Limit */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <label className="text-xs font-semibold text-theme-main flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-emerald-400" /> Time Limit
             </label>
             <select
               value={timeLimitMinutes}
               onChange={(e) => setTimeLimitMinutes(Number(e.target.value))}
-              className="w-full bg-slate-950 border border-slate-800 text-white text-xs rounded-xl p-3 focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full bg-theme-hover border border-theme-border text-theme-main text-xs rounded-xl p-3 focus:outline-none focus:border-brand-500 transition-colors"
             >
-              <option value={5}>5 Minutes</option>
-              <option value={10}>10 Minutes</option>
-              <option value={15}>15 Minutes</option>
-              <option value={30}>30 Minutes</option>
+              <option value={5} className="bg-theme-surface text-theme-main">5 Minutes</option>
+              <option value={10} className="bg-theme-surface text-theme-main">10 Minutes</option>
+              <option value={15} className="bg-theme-surface text-theme-main">15 Minutes</option>
+              <option value={30} className="bg-theme-surface text-theme-main">30 Minutes</option>
             </select>
           </div>
 
@@ -160,7 +160,7 @@ export default function CreateAssessmentCard({ onAssessmentCreated }: CreateAsse
         <button
           onClick={handleCreate}
           disabled={generating || loading || !selectedTopic}
-          className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-sm transition-all shadow-xl shadow-purple-600/25 flex items-center justify-center gap-2.5 disabled:opacity-50"
+          className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-brand-500 to-accent-red hover:from-brand-600 hover:to-brand-700 text-white font-bold text-sm transition-all shadow-xl shadow-brand-500/25 flex items-center justify-center gap-2.5 disabled:opacity-50"
         >
           {generating ? (
             <>

@@ -2,10 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg-main: #FFF5F5;
+  --surface-card: #FFFFFF;
+  --surface-hover: #FEF2F2;
+  --border-color: #FEE2E2;
+  --text-main: #1A0000;
+  --text-muted: #6B2020;
+}
+
+.dark {
+  --bg-main: #000000;
+  --surface-card: #3D0000;
+  --surface-hover: #520000;
+  --border-color: #5C0000;
+  --text-main: #FFFFFF;
+  --text-muted: #D1D5DB;
+}
+
 @layer base {
   body {
-    background-color: #030712;
-    color: #f3f4f6;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 

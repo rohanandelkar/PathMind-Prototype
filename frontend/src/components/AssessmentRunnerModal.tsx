@@ -98,34 +98,34 @@ export default function AssessmentRunnerModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto space-y-6">
+      <div className="bg-theme-surface border border-theme-border rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto space-y-6">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-theme-border pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+            <div className="p-2.5 rounded-xl bg-brand-500/10 text-primary border border-brand-500/20">
               <Award className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">{assessment.title}</h3>
-              <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+              <h3 className="text-lg font-bold text-theme-main">{assessment.title}</h3>
+              <div className="flex items-center gap-2 text-xs text-theme-muted mt-0.5">
                 <span>Topic: {assessment.topic}</span>
                 <span>•</span>
-                <span className="px-2 py-0.5 rounded bg-slate-800 text-purple-300 font-semibold">{assessment.difficulty}</span>
+                <span className="px-2 py-0.5 rounded bg-theme-hover text-primary font-semibold border border-theme-border">{assessment.difficulty}</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             {!evaluationResult && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-sky-400 font-mono text-xs font-bold">
-                <Clock className="w-4 h-4 text-sky-400 animate-pulse" />
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-theme-hover border border-theme-border text-primary font-mono text-xs font-bold">
+                <Clock className="w-4 h-4 text-primary animate-pulse" />
                 <span>Timer: {formatTime(timeLeftSeconds)}</span>
               </div>
             )}
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              className="p-1.5 rounded-lg text-theme-muted hover:text-theme-main hover:bg-theme-hover transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -138,46 +138,46 @@ export default function AssessmentRunnerModal({
           <div className="space-y-6">
             
             {/* Score Banner */}
-            <div className="bg-gradient-to-r from-slate-900 via-purple-950/40 to-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-3">
-              <div className="inline-flex items-center justify-center p-3 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-1">
+            <div className="bg-theme-hover border border-theme-border rounded-2xl p-6 text-center space-y-3">
+              <div className="inline-flex items-center justify-center p-3 rounded-full bg-brand-500/10 text-primary border border-brand-500/20 mb-1">
                 <Trophy className="w-10 h-10 text-amber-400" />
               </div>
-              <h4 className="text-2xl font-extrabold text-white">Assessment Result Breakdown</h4>
+              <h4 className="text-2xl font-extrabold text-theme-main">Assessment Result Breakdown</h4>
               <div className="flex justify-center items-center gap-6 pt-2">
                 <div>
-                  <span className="block text-3xl font-extrabold text-sky-400">{evaluationResult.score_percentage}%</span>
-                  <span className="text-[11px] text-slate-400 uppercase font-semibold">Final Score</span>
+                  <span className="block text-3xl font-extrabold text-primary">{evaluationResult.score_percentage}%</span>
+                  <span className="text-[11px] text-theme-muted uppercase font-semibold">Final Score</span>
                 </div>
-                <div className="h-8 w-px bg-slate-800" />
+                <div className="h-8 w-px bg-theme-border" />
                 <div>
                   <span className="block text-3xl font-extrabold text-emerald-400">{evaluationResult.correct_count} / {evaluationResult.total_questions}</span>
-                  <span className="text-[11px] text-slate-400 uppercase font-semibold">Correct Answers</span>
+                  <span className="text-[11px] text-theme-muted uppercase font-semibold">Correct Answers</span>
                 </div>
-                <div className="h-8 w-px bg-slate-800" />
+                <div className="h-8 w-px bg-theme-border" />
                 <div>
                   <span className="block text-3xl font-extrabold text-amber-400">{formatTime(Math.round(evaluationResult.time_taken_seconds))}</span>
-                  <span className="text-[11px] text-slate-400 uppercase font-semibold">Time Taken</span>
+                  <span className="text-[11px] text-theme-muted uppercase font-semibold">Time Taken</span>
                 </div>
               </div>
             </div>
 
             {/* AI Adaptive Roadmap Result */}
-            <div className="bg-slate-950 border border-sky-500/30 rounded-2xl p-4 space-y-1">
-              <div className="flex items-center gap-2 text-sky-400 font-bold text-xs">
+            <div className="bg-theme-hover border border-brand-500/30 rounded-2xl p-4 space-y-1">
+              <div className="flex items-center gap-2 text-primary font-bold text-xs">
                 <Zap className="w-4 h-4" /> AI Adaptive Roadmap Impact:
               </div>
-              <p className="text-xs text-slate-300">{evaluationResult.adaptation_applied}</p>
+              <p className="text-xs text-theme-main">{evaluationResult.adaptation_applied}</p>
             </div>
 
             {/* Question by Question Detailed Review */}
             <div className="space-y-4 pt-2">
-              <h5 className="text-sm font-bold text-white">Per-Question Detailed Review</h5>
+              <h5 className="text-sm font-bold text-theme-main">Per-Question Detailed Review</h5>
               <div className="space-y-3">
                 {evaluationResult.detailed_results.map((res, idx) => (
-                  <div key={idx} className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
+                  <div key={idx} className="bg-theme-hover border border-theme-border rounded-xl p-4 space-y-3">
                     <div className="flex items-start justify-between gap-3">
-                      <p className="text-xs font-semibold text-white">
-                        <span className="text-purple-400 mr-1.5">{idx + 1}.</span> {res.question}
+                      <p className="text-xs font-semibold text-theme-main">
+                        <span className="text-primary mr-1.5">{idx + 1}.</span> {res.question}
                       </p>
                       {res.is_correct ? (
                         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
@@ -195,7 +195,7 @@ export default function AssessmentRunnerModal({
                         const isUserSelect = res.user_selected_index === oIdx;
                         const isCorrectOpt = res.correct_option_index === oIdx;
                         
-                        let optStyle = "bg-slate-900/60 text-slate-400 border-slate-800/80";
+                        let optStyle = "bg-theme-surface text-theme-muted border-theme-border";
                         if (isCorrectOpt) {
                           optStyle = "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-semibold";
                         } else if (isUserSelect && !isCorrectOpt) {
@@ -212,8 +212,8 @@ export default function AssessmentRunnerModal({
                       })}
                     </div>
 
-                    <p className="text-[11px] text-slate-400 bg-slate-900 p-2.5 rounded-lg border border-slate-800/60 leading-relaxed">
-                      <strong className="text-slate-300">Explanation: </strong>{res.explanation}
+                    <p className="text-[11px] text-theme-muted bg-theme-surface p-2.5 rounded-lg border border-theme-border leading-relaxed">
+                      <strong className="text-theme-main">Explanation: </strong>{res.explanation}
                     </p>
                   </div>
                 ))}
@@ -223,7 +223,7 @@ export default function AssessmentRunnerModal({
             <div className="pt-4">
               <button
                 onClick={onClose}
-                className="w-full py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-colors shadow-lg shadow-purple-600/20"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-accent-red hover:from-brand-600 hover:to-brand-700 text-white font-bold text-xs transition-colors shadow-lg shadow-brand-500/20"
               >
                 Close & Return to Roadmap
               </button>
@@ -235,22 +235,22 @@ export default function AssessmentRunnerModal({
           <div className="space-y-6">
             
             {/* Progress Stepper Bar */}
-            <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
+            <div className="flex items-center justify-between text-xs font-semibold text-theme-muted">
               <span>Question {currentIdx + 1} of {questions.length}</span>
-              <span className="text-purple-400">{Math.round(((currentIdx + 1) / questions.length) * 100)}% Completed</span>
+              <span className="text-primary">{Math.round(((currentIdx + 1) / questions.length) * 100)}% Completed</span>
             </div>
-            <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-theme-hover rounded-full overflow-hidden border border-theme-border">
               <div
-                className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300"
+                className="h-full bg-gradient-to-r from-brand-500 to-accent-red transition-all duration-300"
                 style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}
               />
             </div>
 
             {/* Question Box */}
             {currentQuestion && (
-              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4">
-                <p className="text-sm sm:text-base font-bold text-white leading-relaxed">
-                  <span className="text-purple-400 mr-2">{currentIdx + 1}.</span> {currentQuestion.question}
+              <div className="bg-theme-hover border border-theme-border rounded-2xl p-5 sm:p-6 space-y-4">
+                <p className="text-sm sm:text-base font-bold text-theme-main leading-relaxed">
+                  <span className="text-primary mr-2">{currentIdx + 1}.</span> {currentQuestion.question}
                 </p>
 
                 <div className="space-y-2.5 pt-2">
@@ -262,19 +262,19 @@ export default function AssessmentRunnerModal({
                         onClick={() => handleSelectOption(optIdx)}
                         className={`w-full text-left p-3.5 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-between border ${
                           isSelected
-                            ? 'bg-purple-500/20 text-purple-200 border-purple-500/50 shadow-md'
-                            : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:bg-slate-800/60 hover:border-slate-700'
+                            ? 'bg-brand-500/20 text-primary border-brand-500/50 shadow-md font-bold'
+                            : 'bg-theme-surface text-theme-main border-theme-border hover:bg-theme-hover'
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           <div className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${
-                            isSelected ? 'border-purple-400 bg-purple-500 text-white' : 'border-slate-700 text-slate-400'
+                            isSelected ? 'border-brand-500 bg-brand-500 text-white' : 'border-theme-border text-theme-muted'
                           }`}>
                             {String.fromCharCode(65 + optIdx)}
                           </div>
                           <span>{opt}</span>
                         </div>
-                        {isSelected && <CheckCircle2 className="w-4 h-4 text-purple-400" />}
+                        {isSelected && <CheckCircle2 className="w-4 h-4 text-primary" />}
                       </button>
                     );
                   })}
@@ -287,7 +287,7 @@ export default function AssessmentRunnerModal({
               <button
                 onClick={() => setCurrentIdx((prev) => Math.max(0, prev - 1))}
                 disabled={currentIdx === 0}
-                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 disabled:opacity-40"
+                className="px-4 py-2.5 rounded-xl bg-theme-hover hover:opacity-90 text-theme-main font-semibold text-xs transition-colors flex items-center gap-1.5 border border-theme-border disabled:opacity-40"
               >
                 <ArrowLeft className="w-4 h-4" /> Previous
               </button>
@@ -295,7 +295,7 @@ export default function AssessmentRunnerModal({
               {currentIdx < questions.length - 1 ? (
                 <button
                   onClick={() => setCurrentIdx((prev) => Math.min(questions.length - 1, prev + 1))}
-                  className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-md shadow-purple-600/20"
+                  className="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-md shadow-brand-500/20"
                 >
                   Next Question <ArrowRight className="w-4 h-4" />
                 </button>

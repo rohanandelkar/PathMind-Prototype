@@ -168,36 +168,33 @@ function SelectionPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col relative overflow-hidden selection:bg-sky-500 selection:text-white">
-      {/* Background Subtle Gradient Blobs */}
+    <div className="min-h-screen bg-theme-bg flex flex-col justify-between relative overflow-hidden transition-colors duration-200">
+      {/* Subtle Background Glows */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-48 -left-48 w-[32rem] h-[32rem] bg-sky-600/15 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 -right-48 w-[32rem] h-[32rem] bg-purple-600/15 rounded-full blur-3xl" />
-        <div className="absolute -bottom-48 left-1/3 w-[32rem] h-[32rem] bg-emerald-600/10 rounded-full blur-3xl" />
+        <div className="absolute top-10 left-1/4 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-accent-red/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Top Header Bar */}
-      <header className="relative z-10 border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-xl">
+      {/* Header Bar with Logo & Logout */}
+      <header className="relative z-10 border-b border-theme-border bg-theme-surface/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sky-500 to-violet-600 flex items-center justify-center text-white font-bold text-base shadow-lg shadow-sky-500/30">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-accent-red flex items-center justify-center text-white font-bold text-base shadow-lg shadow-brand-500/30">
               P
             </div>
             <div>
-              <span className="font-bold text-white tracking-tight text-base">PathMind</span>
-              <span className="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
-                Learning Path Selection
-              </span>
+              <span className="font-bold text-base text-theme-main tracking-tight">PathMind</span>
+              <span className="text-[10px] text-theme-muted block -mt-1 font-medium">HCLTech Learning Hub</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-slate-400 hidden sm:block">
-              Signed in as <strong className="text-slate-200">{user?.full_name}</strong>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-theme-muted hidden sm:block">
+              Logged in as <strong className="text-theme-main">{user?.email}</strong>
             </span>
             <button
-              onClick={() => logout()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors border border-slate-800"
+              onClick={logout}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-theme-muted hover:text-rose-500 hover:bg-rose-500/10 transition-colors border border-theme-border"
             >
               <LogOut className="w-3.5 h-3.5" /> Sign out
             </button>
@@ -210,22 +207,22 @@ function SelectionPageContent() {
         
         {/* Title Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-semibold shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-primary text-xs font-semibold shadow-sm">
             <Sparkles className="w-3.5 h-3.5 animate-pulse" />
             <span>AI-Guided Career Tracks</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-theme-main tracking-tight">
             Choose Your Learning Path
           </h1>
-          <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-theme-muted max-w-2xl mx-auto leading-relaxed">
             Select a tailored curriculum to unlock your personalized milestone roadmap, skill radar diagnostics, and hands-on learning resources.
           </p>
 
           {currentActivePath && (
             <div className="pt-1">
-              <span className="text-xs text-slate-400 bg-slate-900 border border-slate-800 px-3 py-1 rounded-full">
-                Currently Active: <span className="font-semibold text-sky-400">{currentActivePath}</span> (You can switch anytime without losing your profile data)
+              <span className="text-xs text-theme-muted bg-theme-hover border border-theme-border px-3 py-1 rounded-full">
+                Currently Active: <span className="font-semibold text-primary">{currentActivePath}</span> (You can switch anytime without losing your profile data)
               </span>
             </div>
           )}
@@ -233,7 +230,7 @@ function SelectionPageContent() {
 
         {/* Error Alert Message */}
         {errorMessage && (
-          <div className="max-w-xl mx-auto mb-8 w-full flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm shadow-lg animate-shake">
+          <div className="max-w-xl mx-auto mb-8 w-full flex items-center gap-3 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-sm shadow-lg">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <div className="flex-1 font-medium">{errorMessage}</div>
           </div>
@@ -249,15 +246,15 @@ function SelectionPageContent() {
             return (
               <div
                 key={path.id}
-                className={`group relative rounded-3xl border bg-slate-900/70 backdrop-blur-xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 shadow-xl ${
+                className={`group relative rounded-3xl border bg-theme-surface/90 backdrop-blur-xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 shadow-xl ${
                   isSelected
-                    ? "border-sky-500 ring-2 ring-sky-500/30 shadow-2xl"
-                    : "border-slate-800/80 hover:border-slate-700"
-                } ${path.colorScheme.border} ${path.colorScheme.glow}`}
+                    ? "border-brand-500 ring-2 ring-brand-500/30 shadow-2xl"
+                    : "border-theme-border hover:border-brand-500/50"
+                }`}
               >
                 {/* Active/Current Badge */}
                 {currentActivePath === path.id && (
-                  <div className="absolute -top-3 right-6 px-3 py-0.5 rounded-full bg-sky-500 text-white text-[11px] font-bold shadow-lg shadow-sky-500/30 flex items-center gap-1">
+                  <div className="absolute -top-3 right-6 px-3 py-0.5 rounded-full bg-brand-600 text-white text-[11px] font-bold shadow-lg shadow-brand-500/30 flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Current Path
                   </div>
                 )}
@@ -266,17 +263,17 @@ function SelectionPageContent() {
                   {/* Card Header with Icon & Meta Badges */}
                   <div className="flex items-start justify-between gap-4 mb-4">
                     <div className="flex items-center gap-3.5">
-                      <div className={`w-12 h-12 rounded-2xl ${path.colorScheme.iconBg} border flex items-center justify-center ${path.colorScheme.iconColor} shadow-inner`}>
+                      <div className="w-12 h-12 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-primary shadow-inner">
                         {path.id === "C" && <Terminal className="w-6 h-6" />}
                         {path.id === "CPP" && <Cpu className="w-6 h-6" />}
                         {path.id === "FULL_STACK_JAVA" && <Layers className="w-6 h-6" />}
                         {path.id === "FULL_STACK_PYTHON" && <Code2 className="w-6 h-6" />}
                       </div>
                       <div>
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-muted block">
                           {path.badge}
                         </span>
-                        <h2 className="text-xl sm:text-2xl font-bold text-white group-hover:text-sky-300 transition-colors">
+                        <h2 className="text-xl sm:text-2xl font-bold text-theme-main group-hover:text-primary transition-colors">
                           {path.name}
                         </h2>
                       </div>
@@ -284,29 +281,29 @@ function SelectionPageContent() {
                   </div>
 
                   {/* Tagline & Description */}
-                  <p className="text-xs font-semibold text-slate-300 mb-2">{path.tagline}</p>
-                  <p className="text-xs text-slate-400 leading-relaxed mb-5">
+                  <p className="text-xs font-semibold text-theme-main mb-2">{path.tagline}</p>
+                  <p className="text-xs text-theme-muted leading-relaxed mb-5">
                     {path.description}
                   </p>
 
                   {/* Metadata Chips: Difficulty & Duration */}
                   <div className="flex flex-wrap items-center gap-2 mb-6 text-xs">
-                    <span className={`px-2.5 py-1 rounded-lg font-semibold border ${path.difficultyColor} flex items-center gap-1.5`}>
+                    <span className="px-2.5 py-1 rounded-lg font-semibold bg-brand-500/10 text-primary border border-brand-500/20 flex items-center gap-1.5">
                       <BarChart3 className="w-3.5 h-3.5" /> {path.difficulty}
                     </span>
-                    <span className="px-2.5 py-1 rounded-lg font-semibold bg-slate-800/80 text-slate-300 border border-slate-700 flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" /> {path.duration}
+                    <span className="px-2.5 py-1 rounded-lg font-semibold bg-theme-hover text-theme-main border border-theme-border flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-theme-muted" /> {path.duration}
                     </span>
                   </div>
 
                   {/* Key Curriculum Highlights */}
-                  <div className="space-y-2 border-t border-slate-800/80 pt-4 mb-6">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
+                  <div className="space-y-2 border-t border-theme-border pt-4 mb-6">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-muted block mb-1">
                       Key Topics Covered
                     </span>
                     {path.features.map((feat, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
-                        <CheckCircle2 className={`w-3.5 h-3.5 ${path.colorScheme.iconColor} shrink-0`} />
+                      <div key={idx} className="flex items-center gap-2 text-xs text-theme-main">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
                         <span>{feat}</span>
                       </div>
                     ))}
@@ -318,9 +315,7 @@ function SelectionPageContent() {
                   id={`select-path-${path.id.toLowerCase()}`}
                   onClick={() => handleSelectPath(path.id)}
                   disabled={isDisabled}
-                  className={`w-full py-3 px-5 rounded-2xl text-white text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 bg-gradient-to-r ${
-                    path.colorScheme.buttonGradient
-                  } disabled:opacity-60 disabled:cursor-not-allowed shadow-lg`}
+                  className="w-full py-3 px-5 rounded-2xl text-white text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 bg-gradient-to-r from-brand-500 to-accent-red hover:from-brand-600 hover:to-brand-700 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-brand-500/20"
                 >
                   {isCurrentlySubmitting ? (
                     <>
@@ -347,7 +342,7 @@ function SelectionPageContent() {
       </main>
 
       {/* Footer Info */}
-      <footer className="relative z-10 border-t border-slate-800/80 py-6 text-center text-xs text-slate-400">
+      <footer className="relative z-10 border-t border-theme-border py-6 text-center text-xs text-theme-muted">
         <p>PathMind AI Recommender • Your progress and data are automatically preserved across all tracks.</p>
       </footer>
     </div>

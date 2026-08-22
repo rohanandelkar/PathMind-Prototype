@@ -50,22 +50,22 @@ export default function AssessmentModal({ assessmentId, isOpen, onClose, onAsses
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-theme-surface border border-theme-border rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+        <div className="flex items-center justify-between border-b border-theme-border pb-4 mb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+            <div className="p-2.5 rounded-xl bg-brand-500/10 text-primary border border-brand-500/20">
               <Award className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">{assessment?.title || 'Interactive Assessment'}</h3>
-              <p className="text-xs text-slate-400">Skill: {assessment?.skill_name} • Difficulty: {assessment?.difficulty}</p>
+              <h3 className="text-lg font-bold text-theme-main">{assessment?.title || 'Interactive Assessment'}</h3>
+              <p className="text-xs text-theme-muted">Skill: {assessment?.skill_name} • Difficulty: {assessment?.difficulty}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-lg text-theme-muted hover:text-theme-main hover:bg-theme-hover transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -73,8 +73,8 @@ export default function AssessmentModal({ assessmentId, isOpen, onClose, onAsses
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
-            <RefreshCw className="w-8 h-8 text-sky-400 animate-spin" />
-            <p className="text-sm text-slate-400">Loading evaluation questions...</p>
+            <RefreshCw className="w-8 h-8 text-primary animate-spin" />
+            <p className="text-sm text-theme-muted">Loading evaluation questions...</p>
           </div>
         ) : result ? (
           /* Result View */
@@ -83,22 +83,22 @@ export default function AssessmentModal({ assessmentId, isOpen, onClose, onAsses
               <CheckCircle className="w-12 h-12" />
             </div>
             <div>
-              <span className="text-4xl font-extrabold text-white">{result.score_percentage}%</span>
+              <span className="text-4xl font-extrabold text-theme-main">{result.score_percentage}%</span>
               <h4 className="text-lg font-bold text-emerald-400 mt-1">Assessment Evaluation Complete</h4>
-              <p className="text-sm text-slate-300 mt-2 max-w-md mx-auto">{result.feedback_summary}</p>
+              <p className="text-sm text-theme-muted mt-2 max-w-md mx-auto">{result.feedback_summary}</p>
             </div>
 
             {/* AI Path Adaptation Result */}
-            <div className="bg-slate-800/80 border border-sky-500/30 rounded-xl p-4 text-left">
-              <div className="flex items-center gap-2 text-sky-400 font-semibold text-xs mb-1">
+            <div className="bg-theme-hover border border-brand-500/30 rounded-xl p-4 text-left">
+              <div className="flex items-center gap-2 text-primary font-semibold text-xs mb-1">
                 <Zap className="w-4 h-4" /> AI Adaptive Roadmap Modification:
               </div>
-              <p className="text-xs text-slate-200">{result.adaptation_applied}</p>
+              <p className="text-xs text-theme-main">{result.adaptation_applied}</p>
             </div>
 
             <button
               onClick={onClose}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-semibold text-sm hover:from-sky-400 hover:to-blue-500 transition-all shadow-lg shadow-sky-500/25"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-brand-500 to-accent-red text-white font-semibold text-sm hover:from-brand-600 hover:to-brand-700 transition-all shadow-lg shadow-brand-500/25"
             >
               Back to Personalized Roadmap
             </button>
@@ -107,9 +107,9 @@ export default function AssessmentModal({ assessmentId, isOpen, onClose, onAsses
           /* Quiz Question Stepper */
           <div className="space-y-6">
             {assessment?.questions.map((q, qIdx) => (
-              <div key={q.id} className="bg-slate-800/40 border border-slate-700/60 rounded-xl p-4">
-                <p className="text-sm font-semibold text-white mb-3">
-                  <span className="text-sky-400 mr-2">{qIdx + 1}.</span> {q.question}
+              <div key={q.id} className="bg-theme-hover border border-theme-border rounded-xl p-4">
+                <p className="text-sm font-semibold text-theme-main mb-3">
+                  <span className="text-primary mr-2">{qIdx + 1}.</span> {q.question}
                 </p>
                 <div className="space-y-2">
                   {q.options.map((opt, optIdx) => {
@@ -120,12 +120,12 @@ export default function AssessmentModal({ assessmentId, isOpen, onClose, onAsses
                         onClick={() => handleOptionSelect(q.id, optIdx)}
                         className={`w-full text-left p-3 rounded-lg text-xs font-medium transition-all flex items-center justify-between border ${
                           isSelected
-                            ? 'bg-sky-500/20 text-sky-300 border-sky-500/50 shadow-sm'
-                            : 'bg-slate-900/50 text-slate-300 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
+                            ? 'bg-brand-500/20 text-primary border-brand-500/50 shadow-sm font-bold'
+                            : 'bg-theme-surface text-theme-main border-theme-border hover:bg-theme-hover'
                         }`}
                       >
                         <span>{opt}</span>
-                        {isSelected && <CheckCircle className="w-4 h-4 text-sky-400" />}
+                        {isSelected && <CheckCircle className="w-4 h-4 text-primary" />}
                       </button>
                     );
                   })}
@@ -137,7 +137,7 @@ export default function AssessmentModal({ assessmentId, isOpen, onClose, onAsses
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white font-semibold text-sm transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2"
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-accent-red hover:from-brand-600 hover:to-brand-700 text-white font-semibold text-sm transition-all shadow-lg shadow-brand-500/20 flex items-center gap-2"
               >
                 {submitting ? (
                   <>
