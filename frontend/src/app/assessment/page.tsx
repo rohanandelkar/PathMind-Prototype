@@ -1,20 +1,44 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppNavbar from '@/components/AppNavbar';
 import CreateAssessmentCard from '@/components/CreateAssessmentCard';
 import AssessmentRunnerModal from '@/components/AssessmentRunnerModal';
-import { GeneratedAssessment, AssessmentEvaluationResult } from '@/lib/types';
+import AssessmentHistory from '@/components/AssessmentHistory';
+import { GeneratedAssessment, AssessmentEvaluationResult, AssessmentAttempt } from '@/lib/types';
+import { fetchAssessmentHistory, getAssessmentById } from '@/lib/api';
 import { Award, Sparkles, CheckCircle2 } from 'lucide-react';
 
 function AssessmentPageContent() {
   const [activeAssessment, setActiveAssessment] = useState<GeneratedAssessment | null>(null);
   const [lastResult, setLastResult] = useState<AssessmentEvaluationResult | null>(null);
+  const [attempts, setAttempts] = useState<AssessmentAttempt[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState<boolean>(true);
+
+  const loadHistory = async () => {
+    setLoadingHistory(true);
+    const data = await fetchAssessmentHistory();
+    setAttempts(data);
+    setLoadingHistory(false);
+  };
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
 
   const handleAssessmentCreated = (assessment: GeneratedAssessment) => {
     setLastResult(null);
     setActiveAssessment(assessment);
+  };
+
+  const handleRetake = async (assessmentId: string) => {
+    const retakeSeed = `retake_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const fetched = await getAssessmentById(assessmentId, retakeSeed);
+    if (fetched) {
+      setLastResult(null);
+      setActiveAssessment(fetched);
+    }
   };
 
   return (
@@ -36,7 +60,7 @@ function AssessmentPageContent() {
 
       {/* Recent Completed Result Highlight (If available) */}
       {lastResult && (
-        <div className="bg-theme-surface border border-theme-border rounded-2xl p-6 space-y-3">
+        <div className="bg-theme-surface border border-theme-border rounded-2xl p-6 space-y-3 shadow-lg">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Recent Assessment Evaluation
@@ -48,13 +72,24 @@ function AssessmentPageContent() {
         </div>
       )}
 
+      {/* Assessment History / My Assessments Section */}
+      <AssessmentHistory
+        attempts={attempts}
+        loading={loadingHistory}
+        onRetake={handleRetake}
+        onRefresh={loadHistory}
+      />
+
       {/* Interactive Assessment Runner Modal */}
       {activeAssessment && (
         <AssessmentRunnerModal
           assessment={activeAssessment}
           isOpen={!!activeAssessment}
           onClose={() => setActiveAssessment(null)}
-          onCompleted={(res) => setLastResult(res)}
+          onCompleted={(res) => {
+            setLastResult(res);
+            loadHistory();
+          }}
         />
       )}
 

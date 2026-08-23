@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { ActivityTrackerProvider } from '@/context/ActivityTrackerContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${inter.className} bg-theme-bg text-theme-main min-h-screen flex flex-col selection:bg-brand-500 selection:text-white transition-colors duration-200`}
       >
         <ThemeProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <ActivityTrackerProvider>{children}</ActivityTrackerProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

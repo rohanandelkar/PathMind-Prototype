@@ -106,6 +106,8 @@ export interface DashboardMetrics {
   overall_progress: number;
   learning_streak_days: number;
   total_hours_learned: number;
+  total_seconds_learned?: number;
+  formatted_time_invested?: string;
   milestone_summary: {
     total: number;
     completed: number;
@@ -137,6 +139,7 @@ export interface LearningSession {
   user_id: string;
   learning_path?: string;
   started_at: string;
+  last_active_at?: string;
   ended_at?: string;
   duration_seconds: number;
   activity_type: string;
@@ -147,14 +150,18 @@ export interface LearningStats {
   user_id: string;
   selected_learning_path?: string;
   total_hours_learned: number;
+  total_seconds_learned?: number;
+  formatted_time_invested?: string;
   learning_streak_days: number;
   total_sessions_count: number;
   active_session?: {
     id: number;
     started_at: string;
+    last_active_at?: string;
     learning_path?: string;
     activity_type: string;
-    elapsed_seconds: number;
+    duration_seconds?: number;
+    elapsed_seconds?: number;
   } | null;
 }
 
@@ -173,6 +180,7 @@ export interface GeneratedAssessment {
   time_limit_minutes: number;
   learning_path: string;
   questions: GeneratedAssessmentQuestion[];
+  seed?: string;
 }
 
 export interface QuestionDetailedResult {
@@ -192,8 +200,36 @@ export interface AssessmentEvaluationResult {
   total_questions: number;
   correct_count: number;
   score_percentage: number;
+  points_earned?: number;
+  max_points?: number;
+  attempt_number?: number;
   passed: boolean;
   time_taken_seconds: number;
   adaptation_applied: string;
   detailed_results: QuestionDetailedResult[];
+}
+
+export interface AssessmentAttempt {
+  id: string;
+  assessment_id: string;
+  user_id?: string;
+  learning_path?: string;
+  title: string;
+  topic: string;
+  difficulty: string;
+  skill_name?: string;
+  total_questions: number;
+  correct_count: number;
+  score: string;
+  score_percentage: number;
+  points_earned: number;
+  max_points?: number;
+  attempt_number: number;
+  passed: boolean;
+  performance_status: string;
+  time_taken_seconds: number;
+  user_answers?: Record<string, number>;
+  detailed_results?: QuestionDetailedResult[];
+  adaptation_applied?: string;
+  completed_at: string;
 }

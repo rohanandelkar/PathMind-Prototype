@@ -14,12 +14,14 @@ from app.models.domain import GeneratedAssessmentDB, AssessmentResultDB
 from app.services.assessment_service import (
     get_topics_for_path,
     generate_ai_assessment,
-    evaluate_and_save_submission
+    evaluate_and_save_submission,
+    shuffle_questions_and_options
 )
 from app.services.seed_data import ASSESSMENTS_DATABASE
 from app.models.schemas import AssessmentSubmit, AssessmentResult
 from app.services.adaptive import evaluate_assessment_and_adapt
 from app.api.roadmap import get_active_roadmap, save_roadmap_to_db
+from fastapi import Query
 
 router = APIRouter()
 
@@ -33,6 +35,7 @@ class EvaluateAssessmentRequest(BaseModel):
     assessment_id: str
     user_answers: Dict[str, int]
     time_taken_seconds: float = 0.0
+    seed: Optional[str] = None
 
 @router.get("/topics")
 def get_available_topics(
@@ -72,6 +75,8 @@ def generate_assessment(
     )
     
     questions_public = json.loads(assessment_db.questions_json)
+    initial_seed = f"gen_{uuid.uuid4().hex[:8]}"
+    shuffled_questions = shuffle_questions_and_options(questions_public, initial_seed)
     
     return {
         "id": assessment_db.id,
@@ -81,24 +86,78 @@ def generate_assessment(
         "num_questions": assessment_db.num_questions,
         "time_limit_minutes": assessment_db.time_limit_minutes,
         "learning_path": assessment_db.learning_path,
-        "questions": questions_public
+        "questions": shuffled_questions,
+        "seed": initial_seed
     }
+
+@router.get("/history")
+def get_user_assessment_history(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+) -> List[Dict[str, Any]]:
+    """
+    GET /api/v1/assessments/history
+    Retrieves user's past assessment attempts from PostgreSQL database.
+    """
+    attempts = db.query(AssessmentResultDB).filter(
+        AssessmentResultDB.user_id == str(current_user.id)
+    ).order_by(AssessmentResultDB.created_at.desc()).all()
+
+    results = []
+    for att in attempts:
+        user_answers = json.loads(att.user_answers_json) if att.user_answers_json else {}
+        detailed_results = json.loads(att.detailed_results_json) if att.detailed_results_json else []
+        topic_name = att.topic or att.skill_name or "General Skill"
+        diff = att.difficulty or "Medium"
+        tot_q = att.total_questions or 0
+        corr_q = att.correct_count or 0
+        pts = att.points_earned if att.points_earned is not None else round((corr_q / (tot_q if tot_q > 0 else 1)) * 10.0, 1)
+        results.append({
+            "id": att.id,
+            "assessment_id": att.assessment_id,
+            "user_id": att.user_id,
+            "learning_path": att.learning_path,
+            "title": f"{topic_name} ({diff}) Assessment",
+            "topic": topic_name,
+            "difficulty": diff,
+            "skill_name": att.skill_name,
+            "total_questions": tot_q,
+            "correct_count": corr_q,
+            "score": f"{corr_q}/{tot_q}",
+            "score_percentage": att.score_percentage,
+            "points_earned": pts,
+            "max_points": 10,
+            "attempt_number": att.attempt_number or 1,
+            "passed": att.passed,
+            "performance_status": "Passed" if att.passed else "Needs Improvement",
+            "time_taken_seconds": att.time_taken_seconds,
+            "user_answers": user_answers,
+            "detailed_results": detailed_results,
+            "adaptation_applied": att.adaptation_applied,
+            "completed_at": att.created_at.isoformat() if att.created_at else None
+        })
+    return results
 
 @router.get("/{assessment_id}")
 def get_assessment_by_id(
     assessment_id: str,
+    seed: Optional[str] = Query(None),
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
     """
     GET /api/v1/assessments/{assessment_id}
-    Retrieves public assessment details without leaking answer keys.
+    Retrieves public assessment details with question/option shuffling for the specified seed.
     """
+    active_seed = seed or f"seed_{uuid.uuid4().hex[:8]}"
+
     # 1. Search generated_assessments table in PostgreSQL
     db_assessment = db.query(GeneratedAssessmentDB).filter(
         GeneratedAssessmentDB.id == assessment_id
     ).first()
     
     if db_assessment:
+        raw_questions = json.loads(db_assessment.questions_json)
+        shuffled = shuffle_questions_and_options(raw_questions, active_seed)
         return {
             "id": db_assessment.id,
             "title": f"{db_assessment.topic} ({db_assessment.difficulty}) Assessment",
@@ -107,12 +166,15 @@ def get_assessment_by_id(
             "difficulty": db_assessment.difficulty,
             "num_questions": db_assessment.num_questions,
             "time_limit_minutes": db_assessment.time_limit_minutes,
-            "questions": json.loads(db_assessment.questions_json)
+            "questions": shuffled,
+            "seed": active_seed
         }
 
     # 2. Check seed/legacy assessments fallback
     for k, v in ASSESSMENTS_DATABASE.items():
         if v["id"] == assessment_id:
+            raw_questions = v["questions"]
+            shuffled = shuffle_questions_and_options(raw_questions, active_seed)
             return {
                 "id": v["id"],
                 "title": v["title"],
@@ -121,12 +183,15 @@ def get_assessment_by_id(
                 "difficulty": v["difficulty"],
                 "num_questions": len(v["questions"]),
                 "time_limit_minutes": 10,
-                "questions": v["questions"]
+                "questions": shuffled,
+                "seed": active_seed
             }
 
     # Default fallback if not found
     first_key = list(ASSESSMENTS_DATABASE.keys())[0]
     v = ASSESSMENTS_DATABASE[first_key]
+    raw_questions = v["questions"]
+    shuffled = shuffle_questions_and_options(raw_questions, active_seed)
     return {
         "id": assessment_id,
         "title": v["title"],
@@ -135,7 +200,8 @@ def get_assessment_by_id(
         "difficulty": v["difficulty"],
         "num_questions": len(v["questions"]),
         "time_limit_minutes": 10,
-        "questions": v["questions"]
+        "questions": shuffled,
+        "seed": active_seed
     }
 
 @router.post("/evaluate")
@@ -146,7 +212,7 @@ def evaluate_assessment(
 ) -> Dict[str, Any]:
     """
     POST /api/v1/assessments/evaluate
-    Evaluates user answers against PostgreSQL answer keys, records results, and adapts roadmap.
+    Evaluates user answers against answer keys with seed shuffling, records 10-point results in PostgreSQL.
     """
     try:
         results = evaluate_and_save_submission(
@@ -154,7 +220,8 @@ def evaluate_assessment(
             user=current_user,
             assessment_id=req.assessment_id,
             user_answers=req.user_answers,
-            time_taken_seconds=req.time_taken_seconds
+            time_taken_seconds=req.time_taken_seconds,
+            seed=req.seed
         )
         return results
     except ValueError as e:

@@ -87,7 +87,7 @@ export default function AssessmentRunnerModal({
     setSubmitting(true);
 
     const elapsedSecs = Math.max(1, Math.round((Date.now() - startTime) / 1000));
-    const result = await evaluateAssessment(assessment.id, userAnswers, elapsedSecs);
+    const result = await evaluateAssessment(assessment.id, userAnswers, elapsedSecs, assessment.seed);
 
     setSubmitting(false);
     if (result) {
@@ -143,10 +143,17 @@ export default function AssessmentRunnerModal({
                 <Trophy className="w-10 h-10 text-amber-400" />
               </div>
               <h4 className="text-2xl font-extrabold text-theme-main">Assessment Result Breakdown</h4>
-              <div className="flex justify-center items-center gap-6 pt-2">
+              <div className="flex justify-center items-center gap-6 pt-2 flex-wrap">
+                <div>
+                  <span className="block text-3xl font-extrabold text-amber-400">
+                    {evaluationResult.points_earned !== undefined ? evaluationResult.points_earned : Math.round((evaluationResult.correct_count / (evaluationResult.total_questions || 1)) * 100) / 10} / 10
+                  </span>
+                  <span className="text-[11px] text-theme-muted uppercase font-semibold">Points Earned</span>
+                </div>
+                <div className="h-8 w-px bg-theme-border" />
                 <div>
                   <span className="block text-3xl font-extrabold text-primary">{evaluationResult.score_percentage}%</span>
-                  <span className="text-[11px] text-theme-muted uppercase font-semibold">Final Score</span>
+                  <span className="text-[11px] text-theme-muted uppercase font-semibold">Percentage</span>
                 </div>
                 <div className="h-8 w-px bg-theme-border" />
                 <div>
@@ -155,7 +162,7 @@ export default function AssessmentRunnerModal({
                 </div>
                 <div className="h-8 w-px bg-theme-border" />
                 <div>
-                  <span className="block text-3xl font-extrabold text-amber-400">{formatTime(Math.round(evaluationResult.time_taken_seconds))}</span>
+                  <span className="block text-3xl font-extrabold text-sky-400">{formatTime(Math.round(evaluationResult.time_taken_seconds))}</span>
                   <span className="text-[11px] text-theme-muted uppercase font-semibold">Time Taken</span>
                 </div>
               </div>

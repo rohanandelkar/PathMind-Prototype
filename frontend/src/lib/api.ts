@@ -1,5 +1,5 @@
 import {
-  LearnerProfile, PersonalizedRoadmap, DashboardMetrics, Assessment, AssessmentResult, ChatMessage, LearningSession, LearningStats, GeneratedAssessment, AssessmentEvaluationResult
+  LearnerProfile, PersonalizedRoadmap, DashboardMetrics, Assessment, AssessmentResult, ChatMessage, LearningSession, LearningStats, GeneratedAssessment, AssessmentEvaluationResult, AssessmentAttempt
 } from './types';
 import { MOCK_PROFILE, MOCK_ROADMAP, MOCK_DASHBOARD, MOCK_ASSESSMENT } from './mockData';
 
@@ -62,6 +62,35 @@ export async function startLearningSession(activityType: string = 'general_learn
     if (res.ok) return await res.json();
   } catch (e) {
     console.warn('Failed to start learning session:', e);
+  }
+  return null;
+}
+
+export async function sendSessionHeartbeat(activityType: string = 'general_learning'): Promise<{ success: boolean; stats: LearningStats } | null> {
+  try {
+    const tzOffsetMinutes = new Date().getTimezoneOffset();
+    const res = await fetch(`${API_BASE_URL}/learning/session/heartbeat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tz_offset_minutes: tzOffsetMinutes, activity_type: activityType }),
+      credentials: 'include'
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn('Failed to send session heartbeat:', e);
+  }
+  return null;
+}
+
+export async function pauseLearningSession(): Promise<{ success: boolean; stats: LearningStats } | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/learning/session/pause`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn('Failed to pause learning session:', e);
   }
   return null;
 }
@@ -133,9 +162,12 @@ export async function generateAssessment(config: {
   return null;
 }
 
-export async function getAssessmentById(assessmentId: string): Promise<GeneratedAssessment | null> {
+export async function getAssessmentById(assessmentId: string, seed?: string): Promise<GeneratedAssessment | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}/assessments/${assessmentId}`, { cache: 'no-store', credentials: 'include' });
+    const url = seed 
+      ? `${API_BASE_URL}/assessments/${assessmentId}?seed=${encodeURIComponent(seed)}` 
+      : `${API_BASE_URL}/assessments/${assessmentId}`;
+    const res = await fetch(url, { cache: 'no-store', credentials: 'include' });
     if (res.ok) return await res.json();
   } catch (e) {
     console.warn('Failed to fetch assessment by id:', e);
@@ -143,7 +175,12 @@ export async function getAssessmentById(assessmentId: string): Promise<Generated
   return null;
 }
 
-export async function evaluateAssessment(assessmentId: string, userAnswers: Record<string, number>, timeTakenSeconds: number): Promise<AssessmentEvaluationResult | null> {
+export async function evaluateAssessment(
+  assessmentId: string, 
+  userAnswers: Record<string, number>, 
+  timeTakenSeconds: number,
+  seed?: string
+): Promise<AssessmentEvaluationResult | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/assessments/evaluate`, {
       method: 'POST',
@@ -151,7 +188,8 @@ export async function evaluateAssessment(assessmentId: string, userAnswers: Reco
       body: JSON.stringify({
         assessment_id: assessmentId,
         user_answers: userAnswers,
-        time_taken_seconds: timeTakenSeconds
+        time_taken_seconds: timeTakenSeconds,
+        seed: seed
       }),
       credentials: 'include'
     });
@@ -160,6 +198,16 @@ export async function evaluateAssessment(assessmentId: string, userAnswers: Reco
     console.warn('Failed to evaluate assessment:', e);
   }
   return null;
+}
+
+export async function fetchAssessmentHistory(): Promise<AssessmentAttempt[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/assessments/history`, { cache: 'no-store', credentials: 'include' });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn('Failed to fetch assessment history:', e);
+  }
+  return [];
 }
 
 export async function fetchAssessment(assessmentId: string): Promise<Assessment> {

@@ -58,6 +58,30 @@ def init_db():
                         ALTER TABLE assessment_results ADD COLUMN user_answers_json TEXT NULL;
                         ALTER TABLE assessment_results ADD COLUMN detailed_results_json TEXT NULL;
                     END IF;
+
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns 
+                        WHERE table_name='assessment_results' AND column_name='points_earned'
+                    ) THEN
+                        ALTER TABLE assessment_results ADD COLUMN points_earned FLOAT DEFAULT 0.0;
+                        ALTER TABLE assessment_results ADD COLUMN attempt_number INTEGER DEFAULT 1;
+                    END IF;
+
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns 
+                        WHERE table_name='learning_sessions' AND column_name='last_active_at'
+                    ) THEN
+                        ALTER TABLE learning_sessions ADD COLUMN last_active_at TIMESTAMP NULL;
+                        UPDATE learning_sessions SET last_active_at = started_at WHERE last_active_at IS NULL;
+                    END IF;
+
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns 
+                        WHERE table_name='learning_sessions' AND column_name='created_at'
+                    ) THEN
+                        ALTER TABLE learning_sessions ADD COLUMN created_at TIMESTAMP NULL;
+                        UPDATE learning_sessions SET created_at = started_at WHERE created_at IS NULL;
+                    END IF;
                 END $$;
             """))
             conn.commit()
@@ -67,6 +91,24 @@ def init_db():
                 cols = [row[1] for row in conn.execute(text("PRAGMA table_info(users)")).fetchall()]
                 if "selected_learning_path" not in cols:
                     conn.execute(text("ALTER TABLE users ADD COLUMN selected_learning_path VARCHAR NULL"))
+                    conn.commit()
+            
+            ar_check = conn.execute(text("SELECT name FROM sqlite_master WHERE type='table' AND name='assessment_results'")).fetchall()
+            if ar_check:
+                ar_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(assessment_results)")).fetchall()]
+                if "points_earned" not in ar_cols:
+                    conn.execute(text("ALTER TABLE assessment_results ADD COLUMN points_earned FLOAT DEFAULT 0.0"))
+                    conn.execute(text("ALTER TABLE assessment_results ADD COLUMN attempt_number INTEGER DEFAULT 1"))
+                    conn.commit()
+
+            ls_check = conn.execute(text("SELECT name FROM sqlite_master WHERE type='table' AND name='learning_sessions'")).fetchall()
+            if ls_check:
+                ls_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(learning_sessions)")).fetchall()]
+                if "last_active_at" not in ls_cols:
+                    conn.execute(text("ALTER TABLE learning_sessions ADD COLUMN last_active_at DATETIME NULL"))
+                    conn.commit()
+                if "created_at" not in ls_cols:
+                    conn.execute(text("ALTER TABLE learning_sessions ADD COLUMN created_at DATETIME NULL"))
                     conn.commit()
 
     Base.metadata.create_all(bind=engine)

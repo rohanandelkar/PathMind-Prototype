@@ -2,23 +2,33 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { fetchDashboardMetrics } from '@/lib/api';
-import { DashboardMetrics } from '@/lib/types';
+import { fetchDashboardMetrics, fetchAssessmentHistory } from '@/lib/api';
+import { DashboardMetrics, AssessmentAttempt } from '@/lib/types';
 import SkillGapChart from '@/components/SkillGapChart';
 import ProgressChart from '@/components/ProgressChart';
+import AssessmentActivity from '@/components/AssessmentActivity';
 import { LayoutDashboard, Zap, Award, Flame, Clock, ArrowRight, Target, CheckCircle } from 'lucide-react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppNavbar from '@/components/AppNavbar';
 import { useAuth } from '@/context/AuthContext';
+import { useActivityTracker } from '@/context/ActivityTrackerContext';
 
 function DashboardContent() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [attempts, setAttempts] = useState<AssessmentAttempt[]>([]);
+  const [loadingAttempts, setLoadingAttempts] = useState<boolean>(true);
   const { user } = useAuth();
+  const { formattedTime, streakDays, totalHours } = useActivityTracker();
 
   useEffect(() => {
     setMetrics(null);
+    setLoadingAttempts(true);
     if (user) {
       fetchDashboardMetrics().then(setMetrics);
+      fetchAssessmentHistory().then((data) => {
+        setAttempts(data);
+        setLoadingAttempts(false);
+      });
     }
   }, [user, user?.selected_learning_path]);
 
@@ -31,6 +41,8 @@ function DashboardContent() {
   }
 
   const displayName = user?.full_name || metrics.user_name || "Learner";
+  const displayStreak = streakDays !== undefined ? streakDays : metrics.learning_streak_days;
+  const displayTime = formattedTime || metrics.formatted_time_invested || `${metrics.total_hours_learned} Hours`;
 
   return (
     <div className="space-y-8 py-2">
@@ -57,7 +69,7 @@ function DashboardContent() {
           <div className="flex items-center gap-2">
             <Flame className="w-6 h-6 text-amber-500 animate-bounce" />
             <div>
-              <span className="block text-lg font-bold text-theme-main">{metrics.learning_streak_days} Days</span>
+              <span className="block text-lg font-bold text-theme-main">{displayStreak} Days</span>
               <span className="text-[10px] text-theme-muted uppercase font-semibold">Active Streak</span>
             </div>
           </div>
@@ -65,7 +77,7 @@ function DashboardContent() {
           <div className="flex items-center gap-2">
             <Clock className="w-6 h-6 text-primary" />
             <div>
-              <span className="block text-lg font-bold text-theme-main">{metrics.total_hours_learned} Hours</span>
+              <span className="block text-lg font-bold text-theme-main min-w-[70px]">{displayTime}</span>
               <span className="text-[10px] text-theme-muted uppercase font-semibold">Time Invested</span>
             </div>
           </div>
@@ -116,38 +128,8 @@ function DashboardContent() {
         <SkillGapChart data={metrics.skills_visualization} />
       </div>
 
-      {/* Priority Skill Gaps Table */}
-      <div className="bg-theme-surface border border-theme-border rounded-2xl p-6 shadow-xl space-y-4">
-        <h3 className="text-base font-bold text-theme-main">Prioritized Skill Gap Queue</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-theme-border text-theme-muted">
-                <th className="pb-3 font-semibold">Skill Name</th>
-                <th className="pb-3 font-semibold">Priority</th>
-                <th className="pb-3 font-semibold">Status</th>
-                <th className="pb-3 font-semibold text-right">Points to Target</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-theme-border">
-              {metrics.skill_gaps_summary.map((gap, idx) => (
-                <tr key={idx} className="hover:bg-theme-hover transition-colors">
-                  <td className="py-3 font-medium text-theme-main">{gap.skill}</td>
-                  <td className="py-3">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      gap.priority === 1 ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                    }`}>
-                      P{gap.priority}
-                    </span>
-                  </td>
-                  <td className="py-3 text-theme-muted">{gap.status}</td>
-                  <td className="py-3 text-right font-bold text-primary">+{gap.gap} pts</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* Assessment Activity Section (Replaces Prioritized Skill Gap Queue) */}
+      <AssessmentActivity attempts={attempts} loading={loadingAttempts} />
 
     </div>
   );

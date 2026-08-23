@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { fetchProfile } from '@/lib/api';
 import { LearnerProfile } from '@/lib/types';
-import { User, Award, Clock, BookOpen, Target, Sparkles, CheckCircle2, Sliders, Shield, Brain, Laptop, Layers } from 'lucide-react';
+import { Award, Clock, BookOpen, Target, Sliders, Brain, Laptop, Layers } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AppNavbar from '@/components/AppNavbar';
@@ -30,7 +30,7 @@ function ProfileContent() {
 
   return (
     <div className="space-y-8 py-2 max-w-5xl mx-auto">
-      
+
       {/* Profile Header */}
       <div className="bg-theme-surface border border-theme-border rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
@@ -68,13 +68,13 @@ function ProfileContent() {
 
       {/* Grid Layout for Profile Sections */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
+
         {/* Card 1: Personal Learning Parameters */}
         <div className="bg-theme-surface border border-theme-border rounded-2xl p-6 shadow-xl space-y-4">
           <div className="flex items-center gap-2 text-primary font-semibold text-xs uppercase tracking-wider">
             <Clock className="w-4 h-4" /> Learning Schedule & Commitment
           </div>
-          
+
           <div className="space-y-3 text-xs">
             <div className="flex justify-between border-b border-theme-border pb-2">
               <span className="text-theme-muted">Weekly Learning Hours:</span>
@@ -135,58 +135,6 @@ function ProfileContent() {
           </div>
         </div>
 
-      </div>
-
-      {/* Existing Verified Skills Section */}
-      <div className="bg-theme-surface border border-theme-border rounded-2xl p-6 shadow-xl space-y-4">
-        <h3 className="text-base font-bold text-theme-main flex items-center gap-2">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400" /> Existing Skills & Verified Knowledge Base
-        </h3>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {profile.existing_skills.map((skill, idx) => (
-            <div key={idx} className="bg-theme-hover border border-theme-border rounded-xl p-4 flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-semibold text-theme-muted uppercase tracking-wider">{skill.category}</span>
-                <h4 className="text-sm font-bold text-theme-main">{skill.skill_name}</h4>
-                <span className="text-xs text-primary font-medium">Level: {skill.level}</span>
-              </div>
-              <div className="text-right">
-                <span className="text-lg font-extrabold text-emerald-400">{skill.score}%</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Identified Skill Gaps Queue */}
-      <div className="bg-theme-surface border border-theme-border rounded-2xl p-6 shadow-xl space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-base font-bold text-theme-main flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary" /> Identified Skill Gaps to Master
-          </h3>
-          <Link href="/roadmap" className="text-xs font-semibold text-primary hover:opacity-80">
-            View Learning Path →
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {profile.skill_gaps.map((gap, idx) => (
-            <div key={idx} className="bg-theme-hover border border-theme-border rounded-xl p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-brand-500/10 text-primary border border-brand-500/20">
-                  Priority P{gap.priority}
-                </span>
-                <span className="text-xs text-theme-muted">{gap.status}</span>
-              </div>
-              <h4 className="text-sm font-bold text-theme-main">{gap.skill_name}</h4>
-              <div className="flex justify-between items-center text-xs border-t border-theme-border pt-2">
-                <span className="text-theme-muted">Points Gap:</span>
-                <span className="font-extrabold text-rose-500">+{gap.gap_score} pts</span>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
     </div>

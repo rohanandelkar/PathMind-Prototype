@@ -1,13 +1,160 @@
 import os
 import uuid
 import json
+import random
 from datetime import datetime
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.models.user import User
 from app.models.domain import GeneratedAssessmentDB, AssessmentResultDB, RoadmapDB
 from app.services.seed_data import TARGET_ROLES_DATABASE
+
+def shuffle_questions_and_options(questions: List[Dict[str, Any]], seed: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Deterministically shuffles question sequence and MCQ options for a given seed string
+    without modifying original questions.
+    """
+    if not seed:
+        return questions
+    rng = random.Random(seed)
+    shuffled = [dict(q) for q in questions]
+    rng.shuffle(shuffled)
+    
+    result = []
+    for q in shuffled:
+        q_copy = dict(q)
+        if "options" in q_copy and isinstance(q_copy["options"], list):
+            opts = list(q_copy["options"])
+            rng.shuffle(opts)
+            q_copy["options"] = opts
+        result.append(q_copy)
+    return result
+
+def evaluate_and_save_submission(
+    db: Session,
+    user: User,
+    assessment_id: str,
+    user_answers: Dict[str, int],
+    time_taken_seconds: float,
+    seed: Optional[str] = None
+) -> Dict[str, Any]:
+    assessment = db.query(GeneratedAssessmentDB).filter(
+        GeneratedAssessmentDB.id == assessment_id
+    ).first()
+    
+    if assessment:
+        questions = json.loads(assessment.questions_json)
+        hidden_answers = json.loads(assessment.correct_answers_json)
+        topic = assessment.topic
+        difficulty = assessment.difficulty
+        learning_path = assessment.learning_path
+    else:
+        seed_item = None
+        for k, v in ASSESSMENTS_DATABASE.items():
+            if v["id"] == assessment_id:
+                seed_item = v
+                break
+        if seed_item:
+            questions = seed_item["questions"]
+            topic = seed_item["skill_name"]
+            difficulty = seed_item["difficulty"]
+            learning_path = user.selected_learning_path or "FULL_STACK_JAVA"
+            hidden_answers = {}
+            for q in questions:
+                hidden_answers[q["id"]] = {
+                    "correct_option_index": q.get("correct_option_index", 0),
+                    "explanation": q.get("explanation", "Correct answer.")
+                }
+        else:
+            raise ValueError(f"Assessment '{assessment_id}' not found.")
+    
+    eval_questions = shuffle_questions_and_options(questions, seed) if seed else questions
+    total_questions = len(eval_questions)
+    correct_count = 0
+    detailed_results = []
+    
+    for q in eval_questions:
+        q_id = q["id"]
+        user_choice = user_answers.get(q_id)
+        ans_info = hidden_answers.get(q_id, {"correct_option_index": 0, "explanation": "No explanation available."})
+        
+        orig_q = next((orig for orig in questions if orig["id"] == q_id), q)
+        orig_correct_idx = ans_info["correct_option_index"]
+        correct_option_text = orig_q["options"][orig_correct_idx] if orig_correct_idx < len(orig_q["options"]) else orig_q["options"][0]
+        
+        shuffled_correct_choice = q["options"].index(correct_option_text) if correct_option_text in q["options"] else orig_correct_idx
+        
+        is_correct = (user_choice == shuffled_correct_choice)
+        if is_correct:
+            correct_count += 1
+            
+        detailed_results.append({
+            "question_id": q_id,
+            "question": q["question"],
+            "options": q["options"],
+            "user_selected_index": user_choice,
+            "correct_option_index": shuffled_correct_choice,
+            "is_correct": is_correct,
+            "explanation": ans_info["explanation"]
+        })
+        
+    score_percentage = round((correct_count / total_questions) * 100.0, 1) if total_questions > 0 else 0.0
+    points_earned = round((correct_count / total_questions) * 10.0, 1) if total_questions > 0 else 0.0
+    passed = score_percentage >= 70.0
+    
+    previous_attempts = db.query(AssessmentResultDB).filter(
+        AssessmentResultDB.user_id == str(user.id),
+        AssessmentResultDB.assessment_id == assessment_id
+    ).count()
+    attempt_number = previous_attempts + 1
+    
+    adaptation = f"Attempt #{attempt_number}: Scored {points_earned}/10 Points ({score_percentage}%). "
+    if passed:
+        adaptation += f"Proficiency verified in '{topic}'. Roadmap skill gap updated."
+    else:
+        adaptation += f"Recommend reviewing '{topic}' before retaking."
+        
+    result_db = AssessmentResultDB(
+        id=str(uuid.uuid4()),
+        assessment_id=assessment_id,
+        user_id=str(user.id),
+        learning_path=learning_path,
+        topic=topic,
+        difficulty=difficulty,
+        skill_name=topic,
+        total_questions=total_questions,
+        correct_count=correct_count,
+        score_percentage=score_percentage,
+        points_earned=points_earned,
+        attempt_number=attempt_number,
+        passed=passed,
+        time_taken_seconds=round(time_taken_seconds, 1),
+        user_answers_json=json.dumps(user_answers),
+        detailed_results_json=json.dumps(detailed_results),
+        adaptation_applied=adaptation,
+        created_at=datetime.utcnow()
+    )
+    db.add(result_db)
+    
+    _apply_roadmap_adaptation_if_passed(db, user, topic, score_percentage)
+    db.commit()
+    
+    return {
+        "assessment_id": assessment_id,
+        "topic": topic,
+        "difficulty": difficulty,
+        "total_questions": total_questions,
+        "correct_count": correct_count,
+        "score_percentage": score_percentage,
+        "points_earned": points_earned,
+        "max_points": 10,
+        "attempt_number": attempt_number,
+        "passed": passed,
+        "time_taken_seconds": round(time_taken_seconds, 1),
+        "adaptation_applied": adaptation,
+        "detailed_results": detailed_results
+    }
 
 TOPICS_BY_PATH = {
     "C": [
@@ -243,93 +390,7 @@ def _generate_rule_based_questions(
 
     return public_q, hidden_a
 
-def evaluate_and_save_submission(
-    db: Session,
-    user: User,
-    assessment_id: str,
-    user_answers: Dict[str, int],
-    time_taken_seconds: float
-) -> Dict[str, Any]:
-    assessment = db.query(GeneratedAssessmentDB).filter(
-        GeneratedAssessmentDB.id == assessment_id
-    ).first()
-    
-    if not assessment:
-        raise ValueError(f"Assessment '{assessment_id}' not found.")
 
-    questions = json.loads(assessment.questions_json)
-    hidden_answers = json.loads(assessment.correct_answers_json)
-    
-    total_questions = len(questions)
-    correct_count = 0
-    detailed_results = []
-    
-    for q in questions:
-        q_id = q["id"]
-        user_choice = user_answers.get(q_id)
-        ans_info = hidden_answers.get(q_id, {"correct_option_index": 0, "explanation": "No explanation available."})
-        correct_choice = ans_info["correct_option_index"]
-        
-        is_correct = (user_choice == correct_choice)
-        if is_correct:
-            correct_count += 1
-            
-        detailed_results.append({
-            "question_id": q_id,
-            "question": q["question"],
-            "options": q["options"],
-            "user_selected_index": user_choice,
-            "correct_option_index": correct_choice,
-            "is_correct": is_correct,
-            "explanation": ans_info["explanation"]
-        })
-        
-    score_percentage = round((correct_count / total_questions) * 100.0, 1) if total_questions > 0 else 0.0
-    passed = score_percentage >= 70.0
-    
-    adaptation = f"Scored {score_percentage}%. "
-    if passed:
-        adaptation += f"Proficiency verified in '{assessment.topic}'. Roadmap skill gap updated."
-    else:
-        adaptation += f"Recommend reviewing '{assessment.topic}' before retaking."
-        
-    result_db = AssessmentResultDB(
-        id=str(uuid.uuid4()),
-        assessment_id=assessment_id,
-        user_id=str(user.id),
-        learning_path=assessment.learning_path,
-        topic=assessment.topic,
-        difficulty=assessment.difficulty,
-        skill_name=assessment.topic,
-        total_questions=total_questions,
-        correct_count=correct_count,
-        score_percentage=score_percentage,
-        passed=passed,
-        time_taken_seconds=round(time_taken_seconds, 1),
-        user_answers_json=json.dumps(user_answers),
-        detailed_results_json=json.dumps(detailed_results),
-        adaptation_applied=adaptation,
-        created_at=datetime.utcnow()
-    )
-    db.add(result_db)
-    
-    # Adaptive Roadmap Update: If user passed, mark matching skill gap as higher proficiency!
-    _apply_roadmap_adaptation_if_passed(db, user, assessment.topic, score_percentage)
-    
-    db.commit()
-    
-    return {
-        "assessment_id": assessment_id,
-        "topic": assessment.topic,
-        "difficulty": assessment.difficulty,
-        "total_questions": total_questions,
-        "correct_count": correct_count,
-        "score_percentage": score_percentage,
-        "passed": passed,
-        "time_taken_seconds": round(time_taken_seconds, 1),
-        "adaptation_applied": adaptation,
-        "detailed_results": detailed_results
-    }
 
 def _apply_roadmap_adaptation_if_passed(db: Session, user: User, topic: str, score_percentage: float):
     user_id_str = str(user.id)

@@ -19,13 +19,16 @@ def get_dashboard_metrics(
     roadmap = get_active_roadmap(request, db)
 
     if user:
-        get_or_create_active_session(db, user, activity_type="dashboard_view")
         stats = calculate_user_learning_stats(db, user, user_tz_offset_minutes=tz_offset)
         streak_days = stats["learning_streak_days"]
         hours_learned = stats["total_hours_learned"]
+        total_seconds_learned = stats["total_seconds_learned"]
+        formatted_time_invested = stats["formatted_time_invested"]
     else:
         streak_days = 0
         hours_learned = 0.0
+        total_seconds_learned = 0.0
+        formatted_time_invested = "0s"
 
     # Skill Radar Data
     skill_chart = []
@@ -61,6 +64,8 @@ def get_dashboard_metrics(
         "overall_progress": roadmap.overall_progress,
         "learning_streak_days": streak_days,
         "total_hours_learned": hours_learned,
+        "total_seconds_learned": total_seconds_learned,
+        "formatted_time_invested": formatted_time_invested,
         "milestone_summary": {
             "total": total_phases,
             "completed": completed_phases,

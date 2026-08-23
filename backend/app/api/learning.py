@@ -6,8 +6,8 @@ from app.core.db import get_db
 from app.api.auth import get_current_user
 from app.models.user import User
 from app.services.learning_service import (
-    get_or_create_active_session,
-    end_active_session,
+    process_session_heartbeat,
+    pause_active_session,
     get_active_learning_session,
     calculate_user_learning_stats
 )
@@ -17,15 +17,9 @@ router = APIRouter()
 class SessionStartRequest(BaseModel):
     activity_type: Optional[str] = "general_learning"
 
-class SessionResponse(BaseModel):
-    id: int
-    user_id: str
-    learning_path: Optional[str] = None
-    started_at: str
-    ended_at: Optional[str] = None
-    duration_seconds: float
-    activity_type: str
-    is_new: bool = False
+class SessionHeartbeatRequest(BaseModel):
+    tz_offset_minutes: int = 0
+    activity_type: Optional[str] = "general_learning"
 
 @router.post("/session/start")
 def start_session(
@@ -34,12 +28,12 @@ def start_session(
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
     """
-    POST /api/learning/session/start
-    Starts or resumes an active learning session in PostgreSQL for the authenticated user.
-    If session is already active (ended_at IS NULL), returns existing active session (is_new=False).
+    POST /api/v1/learning/session/start
+    Starts or resumes an active learning session in PostgreSQL.
     """
     activity_type = payload.activity_type if payload and payload.activity_type else "general_learning"
-    session, is_new = get_or_create_active_session(db, current_user, activity_type=activity_type)
+    session, is_new = process_session_heartbeat(db, current_user, activity_type=activity_type)
+    stats = calculate_user_learning_stats(db, current_user)
     
     return {
         "success": True,
@@ -49,10 +43,53 @@ def start_session(
             "user_id": str(session.user_id),
             "learning_path": session.learning_path,
             "started_at": session.started_at.isoformat(),
-            "ended_at": session.ended_at.isoformat() if session.ended_at else None,
+            "last_active_at": session.last_active_at.isoformat() if session.last_active_at else session.started_at.isoformat(),
             "duration_seconds": session.duration_seconds,
             "activity_type": session.activity_type
-        }
+        },
+        "stats": stats
+    }
+
+@router.post("/session/heartbeat")
+def heartbeat_session(
+    payload: Optional[SessionHeartbeatRequest] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    POST /api/v1/learning/session/heartbeat
+    Receives real-time active heartbeat while user is active on tab.
+    Calculates delta strictly using server timestamps and returns updated stats.
+    """
+    tz_offset = payload.tz_offset_minutes if payload else 0
+    activity_type = payload.activity_type if payload and payload.activity_type else "general_learning"
+    
+    session, is_new = process_session_heartbeat(db, current_user, activity_type=activity_type)
+    stats = calculate_user_learning_stats(db, current_user, user_tz_offset_minutes=tz_offset)
+    
+    return {
+        "success": True,
+        "is_new": is_new,
+        "session_id": session.id,
+        "stats": stats
+    }
+
+@router.post("/session/pause")
+def pause_session(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    POST /api/v1/learning/session/pause
+    Pauses active session when user leaves tab, goes idle, or closes browser.
+    """
+    paused = pause_active_session(db, current_user)
+    stats = calculate_user_learning_stats(db, current_user)
+    
+    return {
+        "success": True,
+        "paused": paused is not None,
+        "stats": stats
     }
 
 @router.post("/session/end")
@@ -61,31 +98,19 @@ def end_session(
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
     """
-    POST /api/learning/session/end
-    Ends current active learning session in PostgreSQL, calculates elapsed duration_seconds, and returns stats.
+    POST /api/v1/learning/session/end
+    Ends current active session.
     """
-    ended_session = end_active_session(db, current_user)
+    ended_session = pause_active_session(db, current_user)
     stats = calculate_user_learning_stats(db, current_user)
     
-    if not ended_session:
-        return {
-            "success": False,
-            "message": "No active session found to end.",
-            "stats": stats
-        }
-        
     return {
         "success": True,
-        "message": "Session ended successfully.",
         "ended_session": {
             "id": ended_session.id,
             "user_id": str(ended_session.user_id),
-            "learning_path": ended_session.learning_path,
-            "started_at": ended_session.started_at.isoformat(),
-            "ended_at": ended_session.ended_at.isoformat() if ended_session.ended_at else None,
-            "duration_seconds": ended_session.duration_seconds,
-            "activity_type": ended_session.activity_type
-        },
+            "duration_seconds": ended_session.duration_seconds
+        } if ended_session else None,
         "stats": stats
     }
 
@@ -95,15 +120,12 @@ def get_current_session(
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
     """
-    GET /api/learning/session/current
-    Returns active session metadata if present.
+    GET /api/v1/learning/session/current
     """
     active = get_active_learning_session(db, current_user)
     if not active:
         return {"active": False, "session": None}
         
-    from datetime import datetime
-    elapsed = max(0.0, (datetime.utcnow() - active.started_at).total_seconds())
     return {
         "active": True,
         "session": {
@@ -111,19 +133,20 @@ def get_current_session(
             "user_id": str(active.user_id),
             "learning_path": active.learning_path,
             "started_at": active.started_at.isoformat(),
+            "last_active_at": active.last_active_at.isoformat() if active.last_active_at else active.started_at.isoformat(),
             "activity_type": active.activity_type,
-            "elapsed_seconds": round(elapsed, 1)
+            "duration_seconds": active.duration_seconds
         }
     }
 
 @router.get("/stats")
 def get_stats(
-    tz_offset_minutes: int = Query(default=0, description="Timezone offset in minutes (e.g. -330 for IST)"),
+    tz_offset_minutes: int = Query(default=0, description="Timezone offset in minutes"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
     """
-    GET /api/learning/stats
-    Returns user's real, PostgreSQL-backed learning statistics (total_hours_learned, learning_streak_days).
+    GET /api/v1/learning/stats
+    Returns user's real, PostgreSQL-backed learning statistics.
     """
     return calculate_user_learning_stats(db, current_user, user_tz_offset_minutes=tz_offset_minutes)

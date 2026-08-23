@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Assessment, AssessmentResult } from '@/lib/types';
-import { fetchAssessment, submitAssessment } from '@/lib/api';
+import { fetchAssessment, submitAssessment, evaluateAssessment } from '@/lib/api';
 import { X, CheckCircle, AlertTriangle, Award, ArrowRight, RefreshCw, Zap } from 'lucide-react';
 
 interface AssessmentModalProps {
@@ -40,7 +40,20 @@ export default function AssessmentModal({ assessmentId, isOpen, onClose, onAsses
   const handleSubmit = async () => {
     if (!assessment) return;
     setSubmitting(true);
-    const res = await submitAssessment(assessment.id, selectedAnswers);
+    const evalRes = await evaluateAssessment(assessment.id, selectedAnswers, 60);
+    let res: AssessmentResult;
+    if (evalRes) {
+      res = {
+        assessment_id: evalRes.assessment_id,
+        skill_name: evalRes.topic,
+        score_percentage: evalRes.score_percentage,
+        passed: evalRes.passed,
+        feedback_summary: `Scored ${evalRes.score_percentage}% (${evalRes.correct_count}/${evalRes.total_questions})`,
+        adaptation_applied: evalRes.adaptation_applied
+      };
+    } else {
+      res = await submitAssessment(assessment.id, selectedAnswers);
+    }
     setResult(res);
     setSubmitting(false);
     if (onAssessmentCompleted) {

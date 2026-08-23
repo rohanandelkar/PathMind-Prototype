@@ -32,11 +32,7 @@ export default function RoadmapPhaseCard({ item, onRefreshRoadmap }: RoadmapPhas
         </span>
       );
     }
-    return (
-      <span className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-theme-hover text-theme-muted border border-theme-border">
-        <Lock className="w-3.5 h-3.5" /> Locked
-      </span>
-    );
+    return null;
   };
 
   return (
@@ -46,11 +42,14 @@ export default function RoadmapPhaseCard({ item, onRefreshRoadmap }: RoadmapPhas
           ? 'bg-theme-surface border-brand-500/50 shadow-xl shadow-brand-500/5 ring-1 ring-brand-500/20'
           : item.status === 'Completed'
           ? 'bg-theme-surface border-emerald-500/30'
-          : 'bg-theme-surface/70 border-theme-border opacity-80'
+          : 'bg-theme-surface border-theme-border'
       }`}
     >
-      {/* Header Bar */}
-      <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Header Bar - Clickable to expand/collapse */}
+      <div 
+        onClick={() => setExpanded(!expanded)}
+        className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-theme-hover/40 transition-colors rounded-2xl"
+      >
         <div className="flex items-start gap-4">
           <div
             className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${
@@ -58,7 +57,7 @@ export default function RoadmapPhaseCard({ item, onRefreshRoadmap }: RoadmapPhas
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                 : item.status === 'In-Progress'
                 ? 'bg-brand-500/20 text-primary border border-brand-500/30'
-                : 'bg-theme-hover text-theme-muted border border-theme-border'
+                : 'bg-theme-hover text-theme-main border border-theme-border'
             }`}
           >
             {item.phase_number}
@@ -78,7 +77,10 @@ export default function RoadmapPhaseCard({ item, onRefreshRoadmap }: RoadmapPhas
             <Clock className="w-3.5 h-3.5 text-theme-muted" /> ~{item.estimated_days} days
           </span>
           <button
-            onClick={() => setExpanded(!expanded)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setExpanded(!expanded);
+            }}
             className="p-2 rounded-xl bg-theme-hover hover:opacity-90 text-theme-main transition-colors border border-theme-border"
           >
             {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}

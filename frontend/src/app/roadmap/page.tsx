@@ -12,7 +12,7 @@ import AppNavbar from '@/components/AppNavbar';
 
 function RoadmapContent() {
   const [roadmap, setRoadmap] = useState<PersonalizedRoadmap | null>(null);
-  const [filter, setFilter] = useState<'All' | 'In-Progress' | 'Completed' | 'Locked'>('All');
+  const [filter, setFilter] = useState<'All' | 'In-Progress' | 'Completed' | 'Upcoming'>('All');
   const [loading, setLoading] = useState<boolean>(true);
   const { user } = useAuth();
 
@@ -39,6 +39,7 @@ function RoadmapContent() {
 
   const filteredItems = roadmap.roadmap_items.filter((item) => {
     if (filter === 'All') return true;
+    if (filter === 'Upcoming') return item.status !== 'In-Progress' && item.status !== 'Completed';
     return item.status === filter;
   });
 
@@ -86,7 +87,7 @@ function RoadmapContent() {
         </div>
 
         <div className="flex items-center gap-1.5 bg-theme-surface p-1 rounded-xl border border-theme-border">
-          {(['All', 'In-Progress', 'Completed', 'Locked'] as const).map((tab) => (
+          {(['All', 'In-Progress', 'Completed', 'Upcoming'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
