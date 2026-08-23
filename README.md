@@ -622,40 +622,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
 | **Tanushree Rameshwar Uikey** | Frontend & Architecture Contributor | Frontend, typography & system architecture |
 | **Riya Meshram** | UI & Component Developer | UI design & reusable components |
 
-### Detailed Team Member Contributions
 
-#### 1. Sujal Belkhode
-- **Role**: Team Leader & Lead Developer
-- **Contributions**:
-  - Led overall end-to-end project development and managed the technical architecture.
-  - Designed and implemented major system functionality across frontend and backend.
-  - Executed frontend/backend integration and JWT authentication flows.
-  - Integrated AI services (OpenAI/Gemini/Rule-engine fallbacks) and core application services.
-  - Oversees release management, session tracker design, and development workflow.
-
-#### 2. Rohan Bandu Andelkar
-- **Role**: Backend Contributor
-- **Contributions**:
-  - Assisted with FastAPI backend development and endpoint routing.
-  - Developed server-side business logic and data schemas.
-  - Assisted with PostgreSQL database ORM integration and migrations.
-
-#### 3. Tanushree Rameshwar Uikey
-- **Role**: Frontend & System Architecture Contributor
-- **Contributions**:
-  - Contributed to frontend page layouts and responsive design implementations.
-  - Managed font choices, typography hierarchy, and visual presentation.
-  - Assisted in designing high-level system architecture diagrams and flow specifications.
-  - Contributed to overall frontend structure and Next.js page organization.
-
-#### 4. Riya Meshram
-- **Role**: UI & Component Developer
-- **Contributions**:
-  - Developed and improved reusable React UI components.
-  - Worked on component styling, dark/light theme integration, and visual aesthetics.
-  - Enhanced overall user experience (UX) across dashboard, quiz runner, and interactive cards.
-
----
 
 ## 🚀 Future Enhancements
 
