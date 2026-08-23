@@ -5,7 +5,30 @@ PathMind is an intelligent, AI-powered personalized learning platform that under
 
 ---
 
-## 1. Overview
+## 🏆 HCLTech Challenge
+
+PathMind was specifically developed as a solution for the **HCLTech Challenge** focused on:
+
+> **"AI-Powered Personalized Learning Path Recommender"**
+
+### Challenge Objectives & PathMind Alignment
+
+The objective of the challenge is to build an intelligent learning assistant that solves the core problems of traditional self-directed learning. PathMind directly fulfills each challenge requirement:
+
+| Challenge Objective | How PathMind Solves It |
+|---|---|
+| **Understands Learner Goals & Interests** | Captures natural language goals, preferred modalities, target roles, and target timelines via AI prompt onboarding (`/onboarding`). |
+| **Builds a Learner Profile** | Persists comprehensive learner profile parameters (`learner_profiles` table) in PostgreSQL including commitment hours, experience level, and learning style. |
+| **Identifies Learning Requirements** | Maps out required core competencies and topological skill prerequisites before advanced subjects are introduced. |
+| **Recommends Relevant Learning Resources** | Maps curated, topic-specific YouTube video tutorials and official documentation directly to each roadmap module. |
+| **Generates Structured Learning Paths** | Builds prerequisite-aware multi-phase roadmaps complete with AI explanations across **C**, **C++**, **Full Stack Java**, and **Full Stack Python** tracks. |
+| **Provides AI-Powered Learning Assistance** | Offers an interactive AI Learning Mentor (`/assistant`) to explain concepts, answer technical questions, and guide learners through roadmap phases. |
+| **Uses Assessments & Progress to Personalize** | Generates dynamic MCQ skill quizzes (`/assessment`), evaluates answers, stores attempts in PostgreSQL, and adapts overall roadmap progress upon passing (score >= 70%). |
+| **Continuous Goal Improvement** | Real-time active tracking calculates ⏱️ **Time Invested** and 🔥 **Active Streak** to keep learners accountable toward their long-term career goals. |
+
+---
+
+## 1. Project Overview
 
 ### What is PathMind?
 PathMind is an end-to-end adaptive learning ecosystem designed to guide self-driven learners and tech professionals from foundational concepts to industry readiness. Instead of delivering unstructured links or linear playlists, PathMind dynamically creates ordered learning roadmaps, assesses skill levels using AI-generated quizzes, provides an AI Learning Mentor, and tracks active learning time in real-time.
@@ -580,3 +603,63 @@ For the frontend, optionally create `frontend/.env.local`:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
 ```
+
+---
+
+## 👥 Team Information & Contributions
+
+### Team Project Metadata
+- **Project Name**: PathMind
+- **Project Type**: AI-Powered Personalized Learning Path Recommender
+- **Challenge**: HCLTech Challenge
+
+### Project Team at a Glance
+
+| Member | Role | Primary Contribution |
+|---|---|---|
+| **Sujal Belkhode** | Team Leader & Lead Developer | Overall development, integration, architecture & core implementation |
+| **Rohan Bandu Andelkar** | Backend Contributor | Backend, APIs & server-side development |
+| **Tanushree Rameshwar Uikey** | Frontend & Architecture Contributor | Frontend, typography & system architecture |
+| **Riya Meshram** | UI & Component Developer | UI design & reusable components |
+
+### Detailed Team Member Contributions
+
+#### 1. Sujal Belkhode
+- **Role**: Team Leader & Lead Developer
+- **Contributions**:
+  - Led overall end-to-end project development and managed the technical architecture.
+  - Designed and implemented major system functionality across frontend and backend.
+  - Executed frontend/backend integration and JWT authentication flows.
+  - Integrated AI services (OpenAI/Gemini/Rule-engine fallbacks) and core application services.
+  - Oversees release management, session tracker design, and development workflow.
+
+#### 2. Rohan Bandu Andelkar
+- **Role**: Backend Contributor
+- **Contributions**:
+  - Assisted with FastAPI backend development and endpoint routing.
+  - Developed server-side business logic and data schemas.
+  - Assisted with PostgreSQL database ORM integration and migrations.
+
+#### 3. Tanushree Rameshwar Uikey
+- **Role**: Frontend & System Architecture Contributor
+- **Contributions**:
+  - Contributed to frontend page layouts and responsive design implementations.
+  - Managed font choices, typography hierarchy, and visual presentation.
+  - Assisted in designing high-level system architecture diagrams and flow specifications.
+  - Contributed to overall frontend structure and Next.js page organization.
+
+#### 4. Riya Meshram
+- **Role**: UI & Component Developer
+- **Contributions**:
+  - Developed and improved reusable React UI components.
+  - Worked on component styling, dark/light theme integration, and visual aesthetics.
+  - Enhanced overall user experience (UX) across dashboard, quiz runner, and interactive cards.
+
+---
+
+## 🚀 Future Enhancements
+
+- **Vector-Based RAG Resource Search**: Incorporate vector database embeddings (e.g. pgvector) for semantic searching across documentation libraries.
+- **Collaborative Study Groups**: Enable peer-to-peer roadmap sharing and group assessment challenges.
+- **Gamified Achievements**: Award badges and certificates upon completing full learning tracks.
+- **Mobile Application**: Native mobile experience built with React Native for learning on the go.
