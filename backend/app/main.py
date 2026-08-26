@@ -1,3 +1,4 @@
+import re
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -5,6 +6,8 @@ from app.core.config import settings
 from app.core.db import init_db
 from app.api import auth, profile, roadmap, assessments, feedback, assistant, dashboard, users, learning
 
+# ── Allowed Origins ──────────────────────────────────────────────────────────
+# Base origins for local development and explicit config settings
 ALLOWED_ORIGINS = [
     settings.FRONTEND_ORIGIN,
     "http://localhost:3000",
@@ -13,6 +16,9 @@ ALLOWED_ORIGINS = [
     "http://127.0.0.1:3001",
 ]
 
+# Regex pattern matching any preview or production Vercel deployment URL
+VERCEL_ORIGIN_REGEX = r"https://.*\.vercel\.app"
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
@@ -20,33 +26,34 @@ app = FastAPI(
 )
 
 # ── CORS ─────────────────────────────────────────────────────────────────────
-# Must NOT use allow_origins=["*"] when allow_credentials=True (cookie auth).
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=VERCEL_ORIGIN_REGEX,
     allow_credentials=True,   # Required for HttpOnly cookie auth
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-# ── Global exception handler ──────────────────────────────────────────────────
-# Starlette's unhandled-exception path bypasses CORS middleware, so the browser
-# sees a CORS error instead of the real 500. This handler re-attaches headers.
+# ── Global Exception Handler ──────────────────────────────────────────────────
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     origin = request.headers.get("origin", "")
     headers = {}
-    if origin in ALLOWED_ORIGINS:
+    
+    # Check against both explicit origins and Vercel regex pattern
+    if origin in ALLOWED_ORIGINS or (origin and re.match(VERCEL_ORIGIN_REGEX, origin)):
         headers["Access-Control-Allow-Origin"] = origin
         headers["Access-Control-Allow-Credentials"] = "true"
+        
     return JSONResponse(
         status_code=500,
         content={"detail": f"Internal server error: {str(exc)}"},
         headers=headers,
     )
 
-# ── Startup event ─────────────────────────────────────────────────────────────
+# ── Startup Event ─────────────────────────────────────────────────────────────
 @app.on_event("startup")
 def on_startup():
     try:
