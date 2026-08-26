@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, Suspense } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function LoginPage() {
+function LoginContent() {
   const { user, loading, login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -17,7 +17,6 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
-  // If already logged in, redirect to dashboard or selection page
   useEffect(() => {
     if (!loading && user) {
       if (user.selected_learning_path) {
@@ -28,7 +27,6 @@ export default function LoginPage() {
     }
   }, [user, loading, router]);
 
-  // Show "registered" success message when redirected from signup
   useEffect(() => {
     if (searchParams.get("registered") === "true") {
       setSuccessMsg("Account created! Please sign in.");
@@ -175,5 +173,17 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-theme-bg flex items-center justify-center p-4">
+        <div className="w-8 h-8 border-4 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
