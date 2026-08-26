@@ -630,3 +630,4 @@ NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
 - **Collaborative Study Groups**: Enable peer-to-peer roadmap sharing and group assessment challenges.
 - **Gamified Achievements**: Award badges and certificates upon completing full learning tracks.
 - **Mobile Application**: Native mobile experience built with React Native for learning on the go.
+  
