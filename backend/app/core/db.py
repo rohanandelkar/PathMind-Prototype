@@ -30,57 +30,71 @@ def init_db():
     from app.models.domain import ProfileDB, RoadmapDB, AssessmentResultDB, FeedbackDB, LearningSessionDB, GeneratedAssessmentDB  # noqa: F401
     from sqlalchemy import text
 
-    # Verify connection and ensure schema is updated
+    # 1. CREATE TABLES FIRST
+    # This ensures tables exist before we try to alter them
+    Base.metadata.create_all(bind=engine)
+
+    # 2. RUN MIGRATIONS
+    # Verify connection and ensure schema is updated for existing tables
     with engine.connect() as conn:
         conn.execute(text("SELECT 1"))
         if engine.dialect.name == "postgresql":
             conn.execute(text("""
                 DO $$
                 BEGIN
-                    IF NOT EXISTS (
-                        SELECT 1 FROM information_schema.columns 
-                        WHERE table_name='users' AND column_name='selected_learning_path'
-                    ) THEN
-                        ALTER TABLE users ADD COLUMN selected_learning_path VARCHAR NULL;
+                    -- Only alter if users table exists
+                    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='users') THEN
+                        IF NOT EXISTS (
+                            SELECT 1 FROM information_schema.columns 
+                            WHERE table_name='users' AND column_name='selected_learning_path'
+                        ) THEN
+                            ALTER TABLE users ADD COLUMN selected_learning_path VARCHAR NULL;
+                        END IF;
                     END IF;
 
-                    IF NOT EXISTS (
-                        SELECT 1 FROM information_schema.columns 
-                        WHERE table_name='assessment_results' AND column_name='user_id'
-                    ) THEN
-                        ALTER TABLE assessment_results ADD COLUMN user_id VARCHAR NULL;
-                        ALTER TABLE assessment_results ADD COLUMN learning_path VARCHAR NULL;
-                        ALTER TABLE assessment_results ADD COLUMN topic VARCHAR NULL;
-                        ALTER TABLE assessment_results ADD COLUMN difficulty VARCHAR NULL;
-                        ALTER TABLE assessment_results ADD COLUMN total_questions INTEGER DEFAULT 0;
-                        ALTER TABLE assessment_results ADD COLUMN correct_count INTEGER DEFAULT 0;
-                        ALTER TABLE assessment_results ADD COLUMN time_taken_seconds FLOAT DEFAULT 0.0;
-                        ALTER TABLE assessment_results ADD COLUMN user_answers_json TEXT NULL;
-                        ALTER TABLE assessment_results ADD COLUMN detailed_results_json TEXT NULL;
+                    -- Only alter if assessment_results table exists
+                    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='assessment_results') THEN
+                        IF NOT EXISTS (
+                            SELECT 1 FROM information_schema.columns 
+                            WHERE table_name='assessment_results' AND column_name='user_id'
+                        ) THEN
+                            ALTER TABLE assessment_results ADD COLUMN user_id VARCHAR NULL;
+                            ALTER TABLE assessment_results ADD COLUMN learning_path VARCHAR NULL;
+                            ALTER TABLE assessment_results ADD COLUMN topic VARCHAR NULL;
+                            ALTER TABLE assessment_results ADD COLUMN difficulty VARCHAR NULL;
+                            ALTER TABLE assessment_results ADD COLUMN total_questions INTEGER DEFAULT 0;
+                            ALTER TABLE assessment_results ADD COLUMN correct_count INTEGER DEFAULT 0;
+                            ALTER TABLE assessment_results ADD COLUMN time_taken_seconds FLOAT DEFAULT 0.0;
+                            ALTER TABLE assessment_results ADD COLUMN user_answers_json TEXT NULL;
+                            ALTER TABLE assessment_results ADD COLUMN detailed_results_json TEXT NULL;
+                        END IF;
+
+                        IF NOT EXISTS (
+                            SELECT 1 FROM information_schema.columns 
+                            WHERE table_name='assessment_results' AND column_name='points_earned'
+                        ) THEN
+                            ALTER TABLE assessment_results ADD COLUMN points_earned FLOAT DEFAULT 0.0;
+                            ALTER TABLE assessment_results ADD COLUMN attempt_number INTEGER DEFAULT 1;
+                        END IF;
                     END IF;
 
-                    IF NOT EXISTS (
-                        SELECT 1 FROM information_schema.columns 
-                        WHERE table_name='assessment_results' AND column_name='points_earned'
-                    ) THEN
-                        ALTER TABLE assessment_results ADD COLUMN points_earned FLOAT DEFAULT 0.0;
-                        ALTER TABLE assessment_results ADD COLUMN attempt_number INTEGER DEFAULT 1;
-                    END IF;
+                    -- Only alter if learning_sessions table exists
+                    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='learning_sessions') THEN
+                        IF NOT EXISTS (
+                            SELECT 1 FROM information_schema.columns 
+                            WHERE table_name='learning_sessions' AND column_name='last_active_at'
+                        ) THEN
+                            ALTER TABLE learning_sessions ADD COLUMN last_active_at TIMESTAMP NULL;
+                            UPDATE learning_sessions SET last_active_at = started_at WHERE last_active_at IS NULL;
+                        END IF;
 
-                    IF NOT EXISTS (
-                        SELECT 1 FROM information_schema.columns 
-                        WHERE table_name='learning_sessions' AND column_name='last_active_at'
-                    ) THEN
-                        ALTER TABLE learning_sessions ADD COLUMN last_active_at TIMESTAMP NULL;
-                        UPDATE learning_sessions SET last_active_at = started_at WHERE last_active_at IS NULL;
-                    END IF;
-
-                    IF NOT EXISTS (
-                        SELECT 1 FROM information_schema.columns 
-                        WHERE table_name='learning_sessions' AND column_name='created_at'
-                    ) THEN
-                        ALTER TABLE learning_sessions ADD COLUMN created_at TIMESTAMP NULL;
-                        UPDATE learning_sessions SET created_at = started_at WHERE created_at IS NULL;
+                        IF NOT EXISTS (
+                            SELECT 1 FROM information_schema.columns 
+                            WHERE table_name='learning_sessions' AND column_name='created_at'
+                        ) THEN
+                            ALTER TABLE learning_sessions ADD COLUMN created_at TIMESTAMP NULL;
+                            UPDATE learning_sessions SET created_at = started_at WHERE created_at IS NULL;
+                        END IF;
                     END IF;
                 END $$;
             """))
@@ -111,6 +125,5 @@ def init_db():
                     conn.execute(text("ALTER TABLE learning_sessions ADD COLUMN created_at DATETIME NULL"))
                     conn.commit()
 
-    Base.metadata.create_all(bind=engine)
     db_name = settings.DATABASE_URL.split("/")[-1]
     print(f"[DATABASE SUCCESS] Connected to database: '{db_name}'")
